@@ -9,7 +9,6 @@
 import WatchKit
 import Foundation
 
-
 extension CGPoint
 {
     func norm() -> CGFloat
@@ -62,6 +61,7 @@ class InterfaceController: WKInterfaceController
     var     m_Lost : Bool = false;
     
     var     m_RenderTimer : NSTimer?
+    var     m_PreviousRenderTime: NSDate?
 
     override func awakeWithContext(context: AnyObject?)
     {
@@ -278,9 +278,23 @@ class InterfaceController: WKInterfaceController
     
     func onRenderTimer(timer:NSTimer)
     {
+        let startT = NSDate()
+        if let previousTime = m_PreviousRenderTime
+        {
+            let timerT = startT.timeIntervalSinceDate(previousTime)
+            print("timer interval=\(timerT * 1000.0) ms")
+        }
+        
+        m_PreviousRenderTime = startT;
+        
         self.processBehaviors()
         self.render()
         self.presentRender()
+        
+        let  endT = NSDate()
+        let duration = endT.timeIntervalSinceDate(startT);
+
+        print("frame:\(duration * 1000.0) ms")
     }
     
     func totalHeight() -> CGFloat
