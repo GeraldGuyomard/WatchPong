@@ -1,5 +1,5 @@
 //
-//  InterfaceController.swift
+//  GameController.swift
 //  WatchPong WatchKit Extension
 //
 //  Created by Gérald Guyomard on 9/13/15.
@@ -38,7 +38,7 @@ extension CGPoint
     }
 }
 
-class InterfaceController: WKInterfaceController
+class GameController: WKInterfaceController
 {
     @IBOutlet var image : WKInterfaceImage?
     @IBOutlet var myPicker: WKInterfacePicker?
@@ -58,6 +58,8 @@ class InterfaceController: WKInterfaceController
     
     var     m_PadPosition : CGFloat = 0;
     var     m_PadHeight : CGFloat = 0;
+    
+    var     m_MustStartGame = true;
     var     m_Lost : Bool = false;
     
     var     m_RenderTimer : NSTimer?
@@ -72,6 +74,28 @@ class InterfaceController: WKInterfaceController
         m_PadHeight = padImage!.size.height * padImage!.scale
         
         initContext()
+        
+        var items = [WKPickerItem]();
+        
+        let item = WKPickerItem()
+        item.title = " ";
+        
+        for _ in 1...GameController.kNbItems
+        {
+            items.append(item)
+        }
+        
+        if let picker = self.myPicker
+        {
+            picker.setItems(items)
+        }
+        
+        m_BallImage = UIImage(named:"ball.png")
+        m_BallSize = m_BallImage!.size
+        
+        m_BallSize.width *= m_BallImage!.scale
+        m_BallSize.height *= m_BallImage!.scale
+
     }
 
     override func willActivate()
@@ -79,34 +103,25 @@ class InterfaceController: WKInterfaceController
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        var items = [WKPickerItem]();
-        
-        let item = WKPickerItem()
-        item.title = " ";
-        
-        for _ in 1...InterfaceController.kNbItems
+        if (m_MustStartGame)
         {
-            items.append(item)
+            m_MustStartGame = false
+            startGame()
         }
-        
-        let picker = self.myPicker
-        picker?.setItems(items)
-        
-        startGame();
     }
 
     override func didDeactivate()
     {
         // This method is called when watch view controller is no longer visible
-        m_Lost = false
-        startGame()
+        //m_Lost = false
+        //startGame()
         
         super.didDeactivate()
     }
 
-    @IBAction func onRestart()
+    @IBAction func onQuit()
     {
-        startGame()
+        self.pushControllerWithName("MainMenuController", context: nil)
     }
     
     @IBAction func pickerAction(iIndex: NSInteger)
@@ -120,7 +135,7 @@ class InterfaceController: WKInterfaceController
 
     func initContext()
     {
-        m_ContextSize = CGSizeMake(136, InterfaceController.kHeight)
+        m_ContextSize = CGSizeMake(136, GameController.kHeight)
         
         let bufferSize = NSInteger(m_ContextSize.width) * NSInteger(m_ContextSize.height) * 4
         m_BackBuffer = malloc(bufferSize)
@@ -249,16 +264,10 @@ class InterfaceController: WKInterfaceController
     func startGame()
     {
         m_PadPosition = 0.5
-        let kInitialPos = InterfaceController.kNbItems / 2
+        let kInitialPos = GameController.kNbItems / 2
         self.myPicker!.setSelectedItemIndex(kInitialPos)
         self.setPadPosition(kInitialPos)
     
-        m_BallImage = UIImage(named:"ball.png")
-        m_BallSize = m_BallImage!.size
-        
-        m_BallSize.width *= m_BallImage!.scale
-        m_BallSize.height *= m_BallImage!.scale
-        
         m_BallPosition.x = m_ContextSize.width - m_BallSize.width
         m_BallPosition.y = (m_ContextSize.height - m_BallSize.height) / 2
     
@@ -299,12 +308,12 @@ class InterfaceController: WKInterfaceController
     
     func totalHeight() -> CGFloat
     {
-        return InterfaceController.kHeight - m_PadHeight
+        return GameController.kHeight - m_PadHeight
     }
     
     func setPadPosition(index:Int)
     {
-        m_PadPosition = CGFloat(index) / CGFloat(InterfaceController.kNbItems)
+        m_PadPosition = CGFloat(index) / CGFloat(GameController.kNbItems)
     
         let group = self.padContainer
     
