@@ -64,6 +64,7 @@ class GameController: WKInterfaceController
     
     var     m_RenderTimer : NSTimer?
     var     m_PreviousRenderTime: NSDate?
+    var     m_dT : NSTimeInterval = 0.0
 
     override func awakeWithContext(context: AnyObject?)
     {
@@ -154,7 +155,8 @@ class GameController: WKInterfaceController
             return
         }
     
-        m_BallPosition = m_BallPosition.add(m_BallDirection.mul(m_BallSpeed))
+        let dV = m_BallSpeed * CGFloat(m_dT)
+        m_BallPosition = m_BallPosition.add(m_BallDirection.mul(dV))
    
         // make it bounce if hitting on wall
         if m_BallPosition.x < 0
@@ -171,13 +173,14 @@ class GameController: WKInterfaceController
             let minPad = kPadPos
             let maxPad = kPadPos + m_PadHeight
             
-            //if ((hotspotY < minPad) || (hotspotY > maxPad))
             if (maxBall < minPad) || (minBall > maxPad)
             {
                 m_BallPosition.x = m_ContextSize.width / 2
                 m_BallPosition.y = m_ContextSize.height / 2
                 m_Lost = true
             
+                WKInterfaceDevice.currentDevice().playHaptic(.Failure)
+                
                 if let timer = m_RenderTimer
                 {
                     timer.invalidate()
@@ -188,6 +191,12 @@ class GameController: WKInterfaceController
             {
                 // Bounce
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
+                
+                m_BallSpeed += 15
+                if m_BallSpeed > 120
+                {
+                    m_BallSpeed = 120
+                }
             }
     
             m_BallDirection.x = -m_BallDirection.x
@@ -268,11 +277,11 @@ class GameController: WKInterfaceController
         self.myPicker!.setSelectedItemIndex(kInitialPos)
         self.setPadPosition(kInitialPos)
     
-        m_BallPosition.x = m_ContextSize.width - m_BallSize.width
+        m_BallPosition.x = m_ContextSize.width - (2 * m_BallSize.width)
         m_BallPosition.y = (m_ContextSize.height - m_BallSize.height) / 2
     
         m_BallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
-        m_BallSpeed = 6.0
+        m_BallSpeed = 60.0
     
         m_Lost = false
         if m_RenderTimer == nil
@@ -292,6 +301,8 @@ class GameController: WKInterfaceController
         {
             let timerT = startT.timeIntervalSinceDate(previousTime)
             print("timer interval=\(timerT * 1000.0) ms")
+            
+            m_dT = startT.timeIntervalSinceDate(previousTime)
         }
         
         m_PreviousRenderTime = startT;
