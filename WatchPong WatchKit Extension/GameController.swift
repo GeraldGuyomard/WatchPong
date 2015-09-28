@@ -104,6 +104,15 @@ class GameController: WKInterfaceController
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
+        if m_RenderTimer == nil
+        {
+            let t : NSTimeInterval = 1.0 / 20.0
+            
+            m_RenderTimer = NSTimer.scheduledTimerWithTimeInterval(t, target:self, selector:Selector("onRenderTimer:"), userInfo:nil, repeats:true)
+            m_RenderTimer = nil
+        }
+        
+        self.myPicker!.focus()
         if (m_MustStartGame)
         {
             m_MustStartGame = false
@@ -113,9 +122,11 @@ class GameController: WKInterfaceController
 
     override func didDeactivate()
     {
-        // This method is called when watch view controller is no longer visible
-        //m_Lost = false
-        //startGame()
+        if let timer = m_RenderTimer
+        {
+            timer.invalidate()
+            m_RenderTimer = nil
+        }
         
         super.didDeactivate()
     }
@@ -155,15 +166,27 @@ class GameController: WKInterfaceController
             return
         }
     
+        if m_dT > 1
+        {
+            var a : Int
+            a = 1;
+        }
+        
         let dV = m_BallSpeed * CGFloat(m_dT)
-        m_BallPosition = m_BallPosition.add(m_BallDirection.mul(dV))
+        let v = m_BallDirection.mul(dV);
+        print("v=\(v.x),  \(v.y)")
+        
+        m_BallPosition = m_BallPosition.add(v)
    
+        let maxX = m_ContextSize.width - m_BallSize.width
+        
         // make it bounce if hitting on wall
         if m_BallPosition.x < 0
         {
+            m_BallPosition.x = 0
             m_BallDirection.x = -m_BallDirection.x;
         }
-        else if m_BallPosition.x >= (m_ContextSize.width - m_BallSize.width)
+        else if m_BallPosition.x >= maxX
         {
             // make sure it bounced on the pad
             let minBall =  m_BallPosition.y
@@ -189,6 +212,8 @@ class GameController: WKInterfaceController
             }
             else
             {
+                m_BallPosition.x = maxX - 1
+                
                 // Bounce
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
                 
@@ -202,8 +227,16 @@ class GameController: WKInterfaceController
             m_BallDirection.x = -m_BallDirection.x
         }
     
-        if (m_BallPosition.y < 0) || (m_BallPosition.y >= (m_ContextSize.height - m_BallSize.height))
+        let maxY = m_ContextSize.height - m_BallSize.height
+        
+        if m_BallPosition.y < 0
         {
+            m_BallPosition.y = 0
+            m_BallDirection.y = -m_BallDirection.y
+        }
+        else if m_BallPosition.y >= maxY
+        {
+            m_BallPosition.y = maxY - 1
             m_BallDirection.y = -m_BallDirection.y
         }
     }
@@ -228,7 +261,9 @@ class GameController: WKInterfaceController
         }
         else
         {
-            CGContextClearRect(m_CGContext, rect)
+            //CGContextClearRect(m_CGContext, rect)
+            let size : Int = Int(m_ContextSize.width) * Int(m_ContextSize.height) * 4
+            memset(m_BackBuffer, 0, size)
         }
     
         drawImage(m_BallImage, atPosition:m_BallPosition)
@@ -284,14 +319,6 @@ class GameController: WKInterfaceController
         m_BallSpeed = 60.0
     
         m_Lost = false
-        if m_RenderTimer == nil
-        {
-            let t : NSTimeInterval = 1.0 / 20.0
-
-            m_RenderTimer = NSTimer.scheduledTimerWithTimeInterval(t, target:self, selector:Selector("onRenderTimer:"), userInfo:nil, repeats:true)
-        }
-    
-        self.myPicker!.focus()
     }
     
     func onRenderTimer(timer:NSTimer)
