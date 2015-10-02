@@ -147,7 +147,7 @@ class GameController: WKInterfaceController
 
     func initContext()
     {
-        m_ContextSize = CGSizeMake(136, GameController.kHeight)
+        m_ContextSize = CGSizeMake(142, GameController.kHeight)
         
         let bufferSize = NSInteger(m_ContextSize.width) * NSInteger(m_ContextSize.height) * 4
         m_BackBuffer = malloc(bufferSize)
