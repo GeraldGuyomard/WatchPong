@@ -59,6 +59,9 @@ class GameController: WKInterfaceController
     var     m_PadPosition : CGFloat = 0;
     var     m_PadHeight : CGFloat = 0;
     
+    var     m_BrickImage : UIImage?
+    var     m_BrickImageSize : CGSize = CGSize(width: 0, height: 0)
+    
     var     m_MustStartGame = true;
     var     m_Lost : Bool = false;
     
@@ -96,6 +99,14 @@ class GameController: WKInterfaceController
         
         m_BallSize.width *= m_BallImage!.scale
         m_BallSize.height *= m_BallImage!.scale
+        
+        m_BrickImage = UIImage(named: "brick-red.png")
+        m_BrickImageSize = m_BrickImage!.size
+
+        m_BrickImageSize.width *= m_BrickImage!.scale
+        m_BrickImageSize.height *= m_BrickImage!.scale
+        
+        
 
     }
 
@@ -250,6 +261,24 @@ class GameController: WKInterfaceController
         CGContextDrawImage(m_CGContext, rect, img)
     }
     
+    func renderBricks()
+    {
+        var pt = CGPointMake(16, 0);
+        
+        for _ in 1...3
+        {
+            drawImage(m_BrickImage, atPosition: pt)
+            pt.y += 2 * m_BrickImageSize.height
+        }
+        
+        pt = CGPointMake(16 + 2 * m_BrickImageSize.width, m_BrickImageSize.height)
+        for _ in 1...3
+        {
+            drawImage(m_BrickImage, atPosition: pt)
+            pt.y += 2 * m_BrickImageSize.height
+        }
+    }
+    
     func render()
     {
         let rect = CGRect(x: 0, y: 0, width: m_ContextSize.width, height: m_ContextSize.height)
@@ -267,6 +296,8 @@ class GameController: WKInterfaceController
         }
     
         drawImage(m_BallImage, atPosition:m_BallPosition)
+        
+        renderBricks()
     }
     
     func presentRender()
