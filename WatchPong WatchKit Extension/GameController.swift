@@ -115,15 +115,17 @@ class GameController: WKInterfaceController
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
+        m_PreviousRenderTime = nil
+        m_dT = 0
+        
         if m_RenderTimer == nil
         {
             let t : NSTimeInterval = 1.0 / 20.0
-            
             m_RenderTimer = NSTimer.scheduledTimerWithTimeInterval(t, target:self, selector:Selector("onRenderTimer:"), userInfo:nil, repeats:true)
-            m_RenderTimer = nil
         }
         
         self.myPicker!.focus()
+        
         if (m_MustStartGame)
         {
             m_MustStartGame = false
