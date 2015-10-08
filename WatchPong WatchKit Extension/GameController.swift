@@ -8,6 +8,7 @@
 
 import WatchKit
 import Foundation
+import WatchScene2D
 
 extension CGPoint
 {
@@ -69,6 +70,8 @@ class GameController: WKInterfaceController
     var     m_PreviousRenderTime: NSDate?
     var     m_dT : NSTimeInterval = 0.0
 
+    var     f2DContext: W2DContext?
+    
     override func awakeWithContext(context: AnyObject?)
     {
         super.awakeWithContext(context)
@@ -105,9 +108,6 @@ class GameController: WKInterfaceController
 
         m_BrickImageSize.width *= m_BrickImage!.scale
         m_BrickImageSize.height *= m_BrickImage!.scale
-        
-        
-
     }
 
     override func willActivate()
@@ -161,6 +161,7 @@ class GameController: WKInterfaceController
     func initContext()
     {
         m_ContextSize = CGSizeMake(142, GameController.kHeight)
+        f2DContext = createW2DContext(m_ContextSize)
         
         let bufferSize = NSInteger(m_ContextSize.width) * NSInteger(m_ContextSize.height) * 4
         m_BackBuffer = malloc(bufferSize)
@@ -177,12 +178,6 @@ class GameController: WKInterfaceController
         if m_Lost
         {
             return
-        }
-    
-        if m_dT > 1
-        {
-            var a : Int
-            a = 1;
         }
         
         let dV = m_BallSpeed * CGFloat(m_dT)

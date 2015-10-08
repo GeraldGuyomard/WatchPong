@@ -1,0 +1,3 @@
+[submodule "WatchScene2D"]
+	path = WatchScene2D
+	url = https://github.com/GeraldGuyomard/WatchScene2D.git

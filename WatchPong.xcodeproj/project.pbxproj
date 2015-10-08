@@ -21,6 +21,8 @@
 		748736C01BA654E100782540 /* WatchPong WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 748736BF1BA654E100782540 /* WatchPong WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		748736C51BA654E100782540 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748736C41BA654E100782540 /* GameController.swift */; };
 		748736C71BA654E100782540 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748736C61BA654E100782540 /* ExtensionDelegate.swift */; };
+		74E4AE8E1BC5F420006860EE /* WatchScene2D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7496299B1BC0AC1C0088EADE /* WatchScene2D.framework */; };
+		74E4AE931BC6040B006860EE /* WatchScene2D.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7496299B1BC0AC1C0088EADE /* WatchScene2D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,9 +40,33 @@
 			remoteGlobalIDString = 748736BE1BA654E100782540;
 			remoteInfo = "WatchPong WatchKit Extension";
 		};
+		7496299A1BC0AC1C0088EADE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 749629961BC0AC1C0088EADE /* WatchScene2D.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7429A98B1BBF6BBC004E3B77;
+			remoteInfo = WatchScene2D;
+		};
+		749629A31BC0B9AD0088EADE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 749629961BC0AC1C0088EADE /* WatchScene2D.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74E4AE7C1BC5F17A006860EE;
+			remoteInfo = WatchScene2D;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7429A9801BBF6846004E3B77 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		748736D01BA654E100782540 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -63,6 +89,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		749629A51BC0B9AD0088EADE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				74E4AE931BC6040B006860EE /* WatchScene2D.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -82,9 +119,18 @@
 		748736C61BA654E100782540 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		748736C81BA654E100782540 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		748736CA1BA654E100782540 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		749629961BC0AC1C0088EADE /* WatchScene2D.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WatchScene2D.xcodeproj; path = WatchScene2D/WatchScene2D.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7429A97F1BBF6846004E3B77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74E4AE8E1BC5F420006860EE /* WatchScene2D.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7487369B1BA654E000782540 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -105,6 +151,7 @@
 		748736951BA654E000782540 = {
 			isa = PBXGroup;
 			children = (
+				749629961BC0AC1C0088EADE /* WatchScene2D.xcodeproj */,
 				748736A01BA654E000782540 /* WatchPong */,
 				748736B41BA654E000782540 /* WatchPong WatchKit App */,
 				748736C31BA654E100782540 /* WatchPong WatchKit Extension */,
@@ -156,6 +203,14 @@
 			path = "WatchPong WatchKit Extension";
 			sourceTree = "<group>";
 		};
+		749629971BC0AC1C0088EADE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7496299B1BC0AC1C0088EADE /* WatchScene2D.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -184,6 +239,8 @@
 			buildPhases = (
 				748736AE1BA654E000782540 /* Resources */,
 				748736D01BA654E100782540 /* Embed App Extensions */,
+				7429A97F1BBF6846004E3B77 /* Frameworks */,
+				7429A9801BBF6846004E3B77 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -202,10 +259,12 @@
 				748736BB1BA654E100782540 /* Sources */,
 				748736BC1BA654E100782540 /* Frameworks */,
 				748736BD1BA654E100782540 /* Resources */,
+				749629A51BC0B9AD0088EADE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				749629A41BC0B9AD0088EADE /* PBXTargetDependency */,
 			);
 			name = "WatchPong WatchKit Extension";
 			productName = "WatchPong WatchKit Extension";
@@ -244,6 +303,12 @@
 			mainGroup = 748736951BA654E000782540;
 			productRefGroup = 7487369F1BA654E000782540 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 749629971BC0AC1C0088EADE /* Products */;
+					ProjectRef = 749629961BC0AC1C0088EADE /* WatchScene2D.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				7487369D1BA654E000782540 /* WatchPong */,
@@ -252,6 +317,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		7496299B1BC0AC1C0088EADE /* WatchScene2D.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = WatchScene2D.framework;
+			remoteRef = 7496299A1BC0AC1C0088EADE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7487369C1BA654E000782540 /* Resources */ = {
@@ -317,6 +392,11 @@
 			target = 748736BE1BA654E100782540 /* WatchPong WatchKit Extension */;
 			targetProxy = 748736C11BA654E100782540 /* PBXContainerItemProxy */;
 		};
+		749629A41BC0B9AD0088EADE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = WatchScene2D;
+			targetProxy = 749629A31BC0B9AD0088EADE /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -350,7 +430,7 @@
 		748736CB1BA654E100782540 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -394,7 +474,7 @@
 		748736CC1BA654E100782540 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -431,6 +511,7 @@
 		748736CE1BA654E100782540 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = "WatchPong WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.WatchPong.watchkitapp.watchkitextension;
@@ -445,6 +526,7 @@
 		748736CF1BA654E100782540 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = "WatchPong WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.WatchPong.watchkitapp.watchkitextension;
@@ -463,6 +545,7 @@
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				IBSC_MODULE = WatchPong_WatchKit_Extension;
 				INFOPLIST_FILE = "WatchPong WatchKit App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.WatchPong.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -479,6 +562,7 @@
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				IBSC_MODULE = WatchPong_WatchKit_Extension;
 				INFOPLIST_FILE = "WatchPong WatchKit App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.WatchPong.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
