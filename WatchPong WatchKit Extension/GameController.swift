@@ -44,12 +44,6 @@ class GameController: WKInterfaceController
     @IBOutlet var image : WKInterfaceImage?
     @IBOutlet var myPicker: WKInterfacePicker?
     @IBOutlet var padContainer : WKInterfaceGroup?
- 
-    var    m_BackBuffer : UnsafeMutablePointer<Void> = UnsafeMutablePointer<Void>();
-    var    m_CGContext : CGContext?;
-    var    m_ContextSize : CGSize = CGSizeMake(0, 0);
-    
-    var    m_Image : CGImage?;
     
     var     m_BallImage : UIImage?
     var     m_BallSize : CGSize = CGSizeMake(0, 0)
@@ -80,7 +74,7 @@ class GameController: WKInterfaceController
         
         m_PadHeight = padImage!.size.height * padImage!.scale
         
-        initContext()
+        f2DContext = createW2DContext(width:142, height:UInt(GameController.kHeight))
         
         var items = [WKPickerItem]();
         
@@ -157,21 +151,6 @@ class GameController: WKInterfaceController
     static let kHeight : CGFloat = 170.0
     static let kNbItems : Int = 40
     //const unsigned int kNbItems = kTotalHeight;
-
-    func initContext()
-    {
-        m_ContextSize = CGSizeMake(142, GameController.kHeight)
-        f2DContext = createW2DContext(m_ContextSize)
-        
-        let bufferSize = NSInteger(m_ContextSize.width) * NSInteger(m_ContextSize.height) * 4
-        m_BackBuffer = malloc(bufferSize)
-        //memset(m_BackBuffer, 0xFF, bufferSize);
-        
-        let rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-        
-        m_CGContext = CGBitmapContextCreate(m_BackBuffer, Int(m_ContextSize.width), Int(m_ContextSize.height), 8, Int(m_ContextSize.width) * 4, rgbColorSpace, CGImageAlphaInfo.NoneSkipLast.rawValue)
-
-    }
     
     func processBehaviors()
     {
@@ -186,7 +165,10 @@ class GameController: WKInterfaceController
         
         m_BallPosition = m_BallPosition.add(v)
    
-        let maxX = m_ContextSize.width - m_BallSize.width
+        let contextWidth = CGFloat(f2DContext!.width);
+        let contextHeight = CGFloat(f2DContext!.height);
+        
+        let maxX = contextWidth - m_BallSize.width
         
         // make it bounce if hitting on wall
         if m_BallPosition.x < 0
@@ -200,14 +182,14 @@ class GameController: WKInterfaceController
             let minBall =  m_BallPosition.y
             let maxBall = m_BallPosition.y + m_BallSize.height
             
-            let kPadPos = m_PadPosition * m_ContextSize.height
+            let kPadPos = m_PadPosition * contextHeight
             let minPad = kPadPos
             let maxPad = kPadPos + m_PadHeight
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                m_BallPosition.x = m_ContextSize.width / 2
-                m_BallPosition.y = m_ContextSize.height / 2
+                m_BallPosition.x = contextWidth / 2
+                m_BallPosition.y = contextHeight / 2
                 m_Lost = true
             
                 WKInterfaceDevice.currentDevice().playHaptic(.Failure)
@@ -235,7 +217,7 @@ class GameController: WKInterfaceController
             m_BallDirection.x = -m_BallDirection.x
         }
     
-        let maxY = m_ContextSize.height - m_BallSize.height
+        let maxY = contextHeight - m_BallSize.height
         
         if m_BallPosition.y < 0
         {
@@ -249,50 +231,36 @@ class GameController: WKInterfaceController
         }
     }
     
-    func drawImage(iImage:UIImage!, atPosition iPos:CGPoint)
-    {
-        let img = iImage.CGImage
-    
-        let rect = CGRect(x:iPos.x, y:iPos.y, width:CGFloat(CGImageGetWidth(img)), height:CGFloat(CGImageGetHeight(img)))
-    
-        CGContextDrawImage(m_CGContext, rect, img)
-    }
-    
     func renderBricks()
     {
         var pt = CGPointMake(16, 0);
         
         for _ in 1...3
         {
-            drawImage(m_BrickImage, atPosition: pt)
+            f2DContext!.draw(image:m_BrickImage, atPosition:pt)
             pt.y += 2 * m_BrickImageSize.height
         }
         
         pt = CGPointMake(16 + 2 * m_BrickImageSize.width, m_BrickImageSize.height)
         for _ in 1...3
         {
-            drawImage(m_BrickImage, atPosition: pt)
+            f2DContext!.draw(image:m_BrickImage, atPosition:pt)
             pt.y += 2 * m_BrickImageSize.height
         }
     }
     
     func render()
     {
-        let rect = CGRect(x: 0, y: 0, width: m_ContextSize.width, height: m_ContextSize.height)
-    
         if m_Lost
         {
-            CGContextSetRGBFillColor(m_CGContext, 1, 0, 0, 1)
-            CGContextFillRect(m_CGContext, rect)
+            f2DContext!.clear(r: 1, g: 0, b: 0, a: 1)
         }
         else
         {
-            //CGContextClearRect(m_CGContext, rect)
-            let size : Int = Int(m_ContextSize.width) * Int(m_ContextSize.height) * 4
-            memset(m_BackBuffer, 0, size)
+            f2DContext!.clear(r: 0, g: 0, b: 0, a: 0)
         }
     
-        drawImage(m_BallImage, atPosition:m_BallPosition)
+        f2DContext!.draw(image: m_BallImage, atPosition: m_BallPosition)
         
         renderBricks()
     }
@@ -301,36 +269,9 @@ class GameController: WKInterfaceController
     {
         if let img = self.image
         {
-            let i = self.backBufferImage()
+            let i = f2DContext!.render()
             img.setImage(i)
         }
-    }
-    
-    func backBufferImage() -> UIImage?
-    {
-        if (m_Image == nil)
-        {
-            let bufferSize : Int = Int(m_ContextSize.width) * Int(m_ContextSize.height) * 4
-            let provider = CGDataProviderCreateWithData(nil, m_BackBuffer, bufferSize, nil)
-    
-            let bitsPerComponent = CGBitmapContextGetBitsPerComponent (m_CGContext)
-            let bitsPerPixel = CGBitmapContextGetBitsPerPixel(m_CGContext)
-            let bytesPerRow = CGBitmapContextGetBytesPerRow(m_CGContext)
-            let colorSpace = CGBitmapContextGetColorSpace(m_CGContext)
-            
-            m_Image = CGImageCreate(Int(m_ContextSize.width), Int(m_ContextSize.height),
-                                    bitsPerComponent,
-                                    bitsPerPixel,
-                                    bytesPerRow,
-                                    colorSpace,
-                                    CGBitmapInfo(rawValue: CGImageAlphaInfo.None.rawValue),
-                                    provider,
-                                    nil,
-                                    false,
-                                    .RenderingIntentDefault)
-        }
-        
-        return UIImage(CGImage: m_Image!)
     }
     
     func startGame()
@@ -340,8 +281,11 @@ class GameController: WKInterfaceController
         self.myPicker!.setSelectedItemIndex(kInitialPos)
         self.setPadPosition(kInitialPos)
     
-        m_BallPosition.x = m_ContextSize.width - (2 * m_BallSize.width)
-        m_BallPosition.y = (m_ContextSize.height - m_BallSize.height) / 2
+        let contextWidth = CGFloat(f2DContext!.width)
+        let contextHeight = CGFloat(f2DContext!.height)
+        
+        m_BallPosition.x = contextWidth - (2 * m_BallSize.width)
+        m_BallPosition.y = (contextHeight - m_BallSize.height) / 2
     
         m_BallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
         m_BallSpeed = 60.0
