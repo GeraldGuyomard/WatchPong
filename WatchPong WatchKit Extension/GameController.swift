@@ -10,36 +10,7 @@ import WatchKit
 import Foundation
 import WatchScene2D
 
-extension CGPoint
-{
-    func norm() -> CGFloat
-    {
-        return CGFloat(sqrtf(Float((x * x) + (y * y))));
-    }
-    
-    func normalizedVector() -> CGPoint
-    {
-        let l = norm();
-        if l == 0
-        {
-            return CGPointMake(0, 0);
-        }
-        
-        return CGPointMake(x / l, y / l);
-    }
-    
-    func add(other: CGPoint) -> CGPoint
-    {
-        return CGPointMake(x + other.x, y + other.y)
-    }
-    
-    func mul(f : CGFloat) -> CGPoint
-    {
-        return CGPointMake(x * f, y * f);
-    }
-}
-
-class GameController: WKInterfaceController
+class GameController: WKInterfaceController, W2DBehavior
 {
     @IBOutlet var image : WKInterfaceImage?
     @IBOutlet var myPicker: WKInterfacePicker?
@@ -60,21 +31,19 @@ class GameController: WKInterfaceController
     var     m_MustStartGame = true;
     var     m_Lost : Bool = false;
     
-    var     m_RenderTimer : NSTimer?
-    var     m_PreviousRenderTime: NSDate?
-    var     m_dT : NSTimeInterval = 0.0
-
     var     f2DContext: W2DContext?
+    var     f2DDirector: W2DDirector?
     
     override func awakeWithContext(context: AnyObject?)
     {
         super.awakeWithContext(context)
         
         let padImage = UIImage(named: "pad.png")
-        
         m_PadHeight = padImage!.size.height * padImage!.scale
         
         f2DContext = createW2DContext(width:142, height:UInt(GameController.kHeight))
+        f2DDirector = createW2DDirector(self.image!, context: f2DContext!)
+        f2DDirector!.addBehavior(self) // cycling ref?
         
         var items = [WKPickerItem]();
         
@@ -109,15 +78,8 @@ class GameController: WKInterfaceController
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        m_PreviousRenderTime = nil
-        m_dT = 0
-        
-        if m_RenderTimer == nil
-        {
-            let t : NSTimeInterval = 1.0 / 20.0
-            m_RenderTimer = NSTimer.scheduledTimerWithTimeInterval(t, target:self, selector:Selector("onRenderTimer:"), userInfo:nil, repeats:true)
-        }
-        
+        f2DDirector?.start()
+                
         self.myPicker!.focus()
         
         if (m_MustStartGame)
@@ -129,11 +91,7 @@ class GameController: WKInterfaceController
 
     override func didDeactivate()
     {
-        if let timer = m_RenderTimer
-        {
-            timer.invalidate()
-            m_RenderTimer = nil
-        }
+        f2DDirector?.stop()
         
         super.didDeactivate()
     }
@@ -152,14 +110,14 @@ class GameController: WKInterfaceController
     static let kNbItems : Int = 40
     //const unsigned int kNbItems = kTotalHeight;
     
-    func processBehaviors()
+    func execute(dT: NSTimeInterval)
     {
         if m_Lost
         {
             return
         }
         
-        let dV = m_BallSpeed * CGFloat(m_dT)
+        let dV = m_BallSpeed * CGFloat(dT)
         let v = m_BallDirection.mul(dV);
         print("v=\(v.x),  \(v.y)")
         
@@ -194,11 +152,7 @@ class GameController: WKInterfaceController
             
                 WKInterfaceDevice.currentDevice().playHaptic(.Failure)
                 
-                if let timer = m_RenderTimer
-                {
-                    timer.invalidate()
-                    m_RenderTimer = nil
-                }
+                f2DDirector!.stop()
             }
             else
             {
@@ -229,6 +183,9 @@ class GameController: WKInterfaceController
             m_BallPosition.y = maxY - 1
             m_BallDirection.y = -m_BallDirection.y
         }
+        
+        // hack
+        render()
     }
     
     func renderBricks()
@@ -265,15 +222,6 @@ class GameController: WKInterfaceController
         renderBricks()
     }
     
-    func presentRender()
-    {
-        if let img = self.image
-        {
-            let i = f2DContext!.render()
-            img.setImage(i)
-        }
-    }
-    
     func startGame()
     {
         m_PadPosition = 0.5
@@ -293,30 +241,7 @@ class GameController: WKInterfaceController
         m_Lost = false
     }
     
-    func onRenderTimer(timer:NSTimer)
-    {
-        let startT = NSDate()
-        if let previousTime = m_PreviousRenderTime
-        {
-            let timerT = startT.timeIntervalSinceDate(previousTime)
-            print("timer interval=\(timerT * 1000.0) ms")
-            
-            m_dT = startT.timeIntervalSinceDate(previousTime)
-        }
-        
-        m_PreviousRenderTime = startT;
-        
-        self.processBehaviors()
-        self.render()
-        self.presentRender()
-        
-        let  endT = NSDate()
-        let duration = endT.timeIntervalSinceDate(startT);
-
-        print("frame:\(duration * 1000.0) ms")
-    }
-    
-    func totalHeight() -> CGFloat
+     func totalHeight() -> CGFloat
     {
         return GameController.kHeight - m_PadHeight
     }
