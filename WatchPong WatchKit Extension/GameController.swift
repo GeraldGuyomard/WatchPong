@@ -16,20 +16,18 @@ class GameController: WKInterfaceController, W2DBehavior
     @IBOutlet var myPicker: WKInterfacePicker?
     @IBOutlet var padContainer : WKInterfaceGroup?
     
-    var     m_BallImage : UIImage?
-    var     m_BallSize : CGSize = CGSizeMake(0, 0)
-    var     m_BallPosition : CGPoint = CGPointMake(0, 0)
-    var     m_BallDirection : CGPoint = CGPointMake(0, 0)
-    var     m_BallSpeed : CGFloat = 0;
+    var     fBallImage : W2DImage?
+    var     fBallPosition : CGPoint = CGPointMake(0, 0)
+    var     fBallDirection : CGPoint = CGPointMake(0, 0)
+    var     fBallSpeed : CGFloat = 0;
     
-    var     m_PadPosition : CGFloat = 0;
-    var     m_PadHeight : CGFloat = 0;
+    var     fPadPosition : CGFloat = 0;
+    var     fPadHeight : CGFloat = 0;
     
-    var     m_BrickImage : UIImage?
-    var     m_BrickImageSize : CGSize = CGSize(width: 0, height: 0)
+    var     fBrickImage : W2DImage?
     
-    var     m_MustStartGame = true;
-    var     m_Lost : Bool = false;
+    var     fMustStartGame = true;
+    var     fLost : Bool = false;
     
     var     f2DContext: W2DContext?
     var     f2DDirector: W2DDirector?
@@ -37,9 +35,6 @@ class GameController: WKInterfaceController, W2DBehavior
     override func awakeWithContext(context: AnyObject?)
     {
         super.awakeWithContext(context)
-        
-        let padImage = UIImage(named: "pad.png")
-        m_PadHeight = padImage!.size.height * padImage!.scale
         
         f2DContext = createW2DContext(width:142, height:UInt(GameController.kHeight))
         f2DDirector = createW2DDirector(self.image!, context: f2DContext!)
@@ -60,17 +55,11 @@ class GameController: WKInterfaceController, W2DBehavior
             picker.setItems(items)
         }
         
-        m_BallImage = UIImage(named:"ball.png")
-        m_BallSize = m_BallImage!.size
+        fBallImage = f2DContext!.image("ball.png")
+        fBrickImage = f2DContext!.image("brick-red.png")
         
-        m_BallSize.width *= m_BallImage!.scale
-        m_BallSize.height *= m_BallImage!.scale
-        
-        m_BrickImage = UIImage(named: "brick-red.png")
-        m_BrickImageSize = m_BrickImage!.size
-
-        m_BrickImageSize.width *= m_BrickImage!.scale
-        m_BrickImageSize.height *= m_BrickImage!.scale
+        let padImage = f2DContext!.image("pad.png")
+        fPadHeight = padImage!.size.height
     }
 
     override func willActivate()
@@ -82,9 +71,9 @@ class GameController: WKInterfaceController, W2DBehavior
                 
         self.myPicker!.focus()
         
-        if (m_MustStartGame)
+        if (fMustStartGame)
         {
-            m_MustStartGame = false
+            fMustStartGame = false
             startGame()
         }
     }
@@ -112,43 +101,43 @@ class GameController: WKInterfaceController, W2DBehavior
     
     func execute(dT: NSTimeInterval)
     {
-        if m_Lost
+        if fLost
         {
             return
         }
         
-        let dV = m_BallSpeed * CGFloat(dT)
-        let v = m_BallDirection.mul(dV);
+        let dV = fBallSpeed * CGFloat(dT)
+        let v = fBallDirection.mul(dV);
         print("v=\(v.x),  \(v.y)")
         
-        m_BallPosition = m_BallPosition.add(v)
+        fBallPosition = fBallPosition.add(v)
    
         let contextWidth = CGFloat(f2DContext!.width);
         let contextHeight = CGFloat(f2DContext!.height);
         
-        let maxX = contextWidth - m_BallSize.width
+        let maxX = contextWidth - fBallImage!.size.width
         
         // make it bounce if hitting on wall
-        if m_BallPosition.x < 0
+        if fBallPosition.x < 0
         {
-            m_BallPosition.x = 0
-            m_BallDirection.x = -m_BallDirection.x;
+            fBallPosition.x = 0
+            fBallDirection.x = -fBallDirection.x;
         }
-        else if m_BallPosition.x >= maxX
+        else if fBallPosition.x >= maxX
         {
             // make sure it bounced on the pad
-            let minBall =  m_BallPosition.y
-            let maxBall = m_BallPosition.y + m_BallSize.height
+            let minBall =  fBallPosition.y
+            let maxBall = fBallPosition.y + fBallImage!.size.height
             
-            let kPadPos = m_PadPosition * contextHeight
+            let kPadPos = fPadPosition * contextHeight
             let minPad = kPadPos
-            let maxPad = kPadPos + m_PadHeight
+            let maxPad = kPadPos + fPadHeight
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                m_BallPosition.x = contextWidth / 2
-                m_BallPosition.y = contextHeight / 2
-                m_Lost = true
+                fBallPosition.x = contextWidth / 2
+                fBallPosition.y = contextHeight / 2
+                fLost = true
             
                 WKInterfaceDevice.currentDevice().playHaptic(.Failure)
                 
@@ -156,32 +145,32 @@ class GameController: WKInterfaceController, W2DBehavior
             }
             else
             {
-                m_BallPosition.x = maxX - 1
+                fBallPosition.x = maxX - 1
                 
                 // Bounce
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
                 
-                m_BallSpeed += 15
-                if m_BallSpeed > 120
+                fBallSpeed += 15
+                if fBallSpeed > 120
                 {
-                    m_BallSpeed = 120
+                    fBallSpeed = 120
                 }
             }
     
-            m_BallDirection.x = -m_BallDirection.x
+            fBallDirection.x = -fBallDirection.x
         }
     
-        let maxY = contextHeight - m_BallSize.height
+        let maxY = contextHeight - fBallImage!.size.height
         
-        if m_BallPosition.y < 0
+        if fBallPosition.y < 0
         {
-            m_BallPosition.y = 0
-            m_BallDirection.y = -m_BallDirection.y
+            fBallPosition.y = 0
+            fBallDirection.y = -fBallDirection.y
         }
-        else if m_BallPosition.y >= maxY
+        else if fBallPosition.y >= maxY
         {
-            m_BallPosition.y = maxY - 1
-            m_BallDirection.y = -m_BallDirection.y
+            fBallPosition.y = maxY - 1
+            fBallDirection.y = -fBallDirection.y
         }
         
         // hack
@@ -192,23 +181,25 @@ class GameController: WKInterfaceController, W2DBehavior
     {
         var pt = CGPointMake(16, 0);
         
+        let brickSize = fBrickImage!.size
+        
         for _ in 1...3
         {
-            f2DContext!.draw(image:m_BrickImage, atPosition:pt)
-            pt.y += 2 * m_BrickImageSize.height
+            fBrickImage!.draw(pt)
+            pt.y += 2 * brickSize.height
         }
         
-        pt = CGPointMake(16 + 2 * m_BrickImageSize.width, m_BrickImageSize.height)
+        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
         for _ in 1...3
         {
-            f2DContext!.draw(image:m_BrickImage, atPosition:pt)
-            pt.y += 2 * m_BrickImageSize.height
+            fBrickImage!.draw(pt)
+            pt.y += 2 * brickSize.height
         }
     }
     
     func render()
     {
-        if m_Lost
+        if fLost
         {
             f2DContext!.clear(r: 1, g: 0, b: 0, a: 1)
         }
@@ -217,14 +208,14 @@ class GameController: WKInterfaceController, W2DBehavior
             f2DContext!.clear(r: 0, g: 0, b: 0, a: 0)
         }
     
-        f2DContext!.draw(image: m_BallImage, atPosition: m_BallPosition)
+        fBallImage?.draw(fBallPosition)
         
         renderBricks()
     }
     
     func startGame()
     {
-        m_PadPosition = 0.5
+        fPadPosition = 0.5
         let kInitialPos = GameController.kNbItems / 2
         self.myPicker!.setSelectedItemIndex(kInitialPos)
         self.setPadPosition(kInitialPos)
@@ -232,28 +223,29 @@ class GameController: WKInterfaceController, W2DBehavior
         let contextWidth = CGFloat(f2DContext!.width)
         let contextHeight = CGFloat(f2DContext!.height)
         
-        m_BallPosition.x = contextWidth - (2 * m_BallSize.width)
-        m_BallPosition.y = (contextHeight - m_BallSize.height) / 2
+        let ballSize = fBallImage!.size
+        fBallPosition.x = contextWidth - (2 * ballSize.width)
+        fBallPosition.y = (contextHeight - ballSize.height) / 2
     
-        m_BallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
-        m_BallSpeed = 60.0
+        fBallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
+        fBallSpeed = 60.0
     
-        m_Lost = false
+        fLost = false
     }
     
-     func totalHeight() -> CGFloat
+    func totalHeight() -> CGFloat
     {
-        return GameController.kHeight - m_PadHeight
+        return GameController.kHeight - fPadHeight
     }
     
     func setPadPosition(index:Int)
     {
-        m_PadPosition = CGFloat(index) / CGFloat(GameController.kNbItems)
+        fPadPosition = CGFloat(index) / CGFloat(GameController.kNbItems)
     
         let group = self.padContainer
     
         var insets = UIEdgeInsets(top:0, left:0, bottom:0, right:0)
-        insets.top = totalHeight() * (1.0 - m_PadPosition)
+        insets.top = totalHeight() * (1.0 - fPadPosition)
     
         group!.setContentInset(insets)
     }
