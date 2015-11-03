@@ -24,8 +24,6 @@ class GameController: WKInterfaceController, W2DBehavior
     var     fPadPosition : CGFloat = 0;
     var     fPadHeight : CGFloat = 0;
     
-    var     fBrickImage : W2DImage?
-    
     var     fMustStartGame = true;
     var     fLost : Bool = false;
     
@@ -56,7 +54,6 @@ class GameController: WKInterfaceController, W2DBehavior
         }
         
         fBallImage = f2DContext!.image(named:"ball.png")
-        fBrickImage = f2DContext!.image(named:"brick-red.png")
         
         let padImage = f2DContext!.image(named:"pad.png")
         fPadHeight = padImage!.size.height
@@ -184,11 +181,13 @@ class GameController: WKInterfaceController, W2DBehavior
         let scene = W2DScene()
         
         var pt = CGPointMake(16, 0);
-        let brickSize = fBrickImage!.size
+        
+        let brickImage = f2DContext!.image(named:"brick-red.png")
+        let brickSize = brickImage!.size
         
         for _ in 1...3
         {
-            let brick = W2DSprite(image:fBrickImage!)
+            let brick = W2DSprite(image:brickImage!)
             brick.position = pt
             scene.addChild(brick)
             
@@ -198,7 +197,7 @@ class GameController: WKInterfaceController, W2DBehavior
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
         for _ in 1...3
         {
-            let brick = W2DSprite(image:fBrickImage!)
+            let brick = W2DSprite(image:brickImage!)
             brick.position = pt
             scene.addChild(brick)
             
@@ -206,26 +205,6 @@ class GameController: WKInterfaceController, W2DBehavior
         }
         
         return scene
-    }
-    
-    func renderBricks()
-    {
-        var pt = CGPointMake(16, 0);
-        
-        let brickSize = fBrickImage!.size
-        
-        for _ in 1...3
-        {
-            fBrickImage!.draw(pt)
-            pt.y += 2 * brickSize.height
-        }
-        
-        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
-        for _ in 1...3
-        {
-            fBrickImage!.draw(pt)
-            pt.y += 2 * brickSize.height
-        }
     }
     
     func render()
@@ -240,8 +219,6 @@ class GameController: WKInterfaceController, W2DBehavior
         }
     
         fBallImage?.draw(fBallPosition)
-        
-        //renderBricks()
     }
     
     func startGame()
