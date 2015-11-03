@@ -55,11 +55,13 @@ class GameController: WKInterfaceController, W2DBehavior
             picker.setItems(items)
         }
         
-        fBallImage = f2DContext!.image("ball.png")
-        fBrickImage = f2DContext!.image("brick-red.png")
+        fBallImage = f2DContext!.image(named:"ball.png")
+        fBrickImage = f2DContext!.image(named:"brick-red.png")
         
-        let padImage = f2DContext!.image("pad.png")
+        let padImage = f2DContext!.image(named:"pad.png")
         fPadHeight = padImage!.size.height
+        
+        f2DDirector!.currentScene = self.createScene()
     }
 
     override func willActivate()
@@ -177,6 +179,35 @@ class GameController: WKInterfaceController, W2DBehavior
         render()
     }
     
+    func createScene() -> W2DScene
+    {
+        let scene = W2DScene()
+        
+        var pt = CGPointMake(16, 0);
+        let brickSize = fBrickImage!.size
+        
+        for _ in 1...3
+        {
+            let brick = W2DSprite(image:fBrickImage!)
+            brick.position = pt
+            scene.addChild(brick)
+            
+            pt.y += 2 * brickSize.height
+        }
+        
+        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
+        for _ in 1...3
+        {
+            let brick = W2DSprite(image:fBrickImage!)
+            brick.position = pt
+            scene.addChild(brick)
+            
+            pt.y += 2 * brickSize.height
+        }
+        
+        return scene
+    }
+    
     func renderBricks()
     {
         var pt = CGPointMake(16, 0);
@@ -210,7 +241,7 @@ class GameController: WKInterfaceController, W2DBehavior
     
         fBallImage?.draw(fBallPosition)
         
-        renderBricks()
+        //renderBricks()
     }
     
     func startGame()
