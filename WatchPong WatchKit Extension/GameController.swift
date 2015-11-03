@@ -22,6 +22,7 @@ class GameController: WKInterfaceController, W2DBehavior
     
     var     fPadPosition : CGFloat = 0;
     var     fPadHeight : CGFloat = 0;
+    var     fPadSprite : W2DSprite?
     
     var     fMustStartGame = true;
     var     fLost : Bool = false;
@@ -54,6 +55,7 @@ class GameController: WKInterfaceController, W2DBehavior
         
         let padImage = f2DContext!.image(named:"pad.png")
         fPadHeight = padImage!.size.height
+        fPadSprite = W2DSprite(image: padImage)
         
         f2DDirector!.currentScene = self.createScene()
     }
@@ -205,6 +207,11 @@ class GameController: WKInterfaceController, W2DBehavior
         fBallSprite = W2DSprite(named: "ball.png", inContext:f2DContext!)
         scene.addChild(fBallSprite)
         
+        assert(fPadSprite != nil)
+        scene.addChild(fPadSprite)
+        
+        fPadSprite!.position = CGPointMake(CGFloat(f2DContext!.width) - fPadSprite!.size.width, 0)
+        
         return scene
     }
     
@@ -244,6 +251,11 @@ class GameController: WKInterfaceController, W2DBehavior
         insets.top = totalHeight() * (1.0 - fPadPosition)
     
         group!.setContentInset(insets)
+        
+        
+        var pos = fPadSprite!.position
+        pos.y = fPadPosition * totalHeight()
+        fPadSprite!.position = pos
     }
 
 
