@@ -16,8 +16,7 @@ class GameController: WKInterfaceController, W2DBehavior
     @IBOutlet var myPicker: WKInterfacePicker?
     @IBOutlet var padContainer : WKInterfaceGroup?
     
-    var     fBallImage : W2DImage?
-    var     fBallPosition : CGPoint = CGPointMake(0, 0)
+    var     fBallSprite : W2DSprite?
     var     fBallDirection : CGPoint = CGPointMake(0, 0)
     var     fBallSpeed : CGFloat = 0;
     
@@ -52,8 +51,6 @@ class GameController: WKInterfaceController, W2DBehavior
         {
             picker.setItems(items)
         }
-        
-        fBallImage = f2DContext!.image(named:"ball.png")
         
         let padImage = f2DContext!.image(named:"pad.png")
         fPadHeight = padImage!.size.height
@@ -109,24 +106,25 @@ class GameController: WKInterfaceController, W2DBehavior
         let v = fBallDirection.mul(dV);
         print("v=\(v.x),  \(v.y)")
         
-        fBallPosition = fBallPosition.add(v)
+        var ballPos = fBallSprite!.position.add(v)
    
         let contextWidth = CGFloat(f2DContext!.width);
         let contextHeight = CGFloat(f2DContext!.height);
         
-        let maxX = contextWidth - fBallImage!.size.width
+        let ballSize = fBallSprite!.size
+        let maxX = contextWidth - ballSize.width
         
         // make it bounce if hitting on wall
-        if fBallPosition.x < 0
+        if ballPos.x < 0
         {
-            fBallPosition.x = 0
+            ballPos.x = 0
             fBallDirection.x = -fBallDirection.x;
         }
-        else if fBallPosition.x >= maxX
+        else if ballPos.x >= maxX
         {
             // make sure it bounced on the pad
-            let minBall =  fBallPosition.y
-            let maxBall = fBallPosition.y + fBallImage!.size.height
+            let minBall =  ballPos.y
+            let maxBall = ballPos.y + ballSize.height
             
             let kPadPos = fPadPosition * contextHeight
             let minPad = kPadPos
@@ -134,9 +132,10 @@ class GameController: WKInterfaceController, W2DBehavior
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                fBallPosition.x = contextWidth / 2
-                fBallPosition.y = contextHeight / 2
+                ballPos.x = contextWidth / 2
+                ballPos.y = contextHeight / 2
                 fLost = true
+                f2DDirector!.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
             
                 WKInterfaceDevice.currentDevice().playHaptic(.Failure)
                 
@@ -144,7 +143,7 @@ class GameController: WKInterfaceController, W2DBehavior
             }
             else
             {
-                fBallPosition.x = maxX - 1
+                ballPos.x = maxX - 1
                 
                 // Bounce
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
@@ -159,21 +158,20 @@ class GameController: WKInterfaceController, W2DBehavior
             fBallDirection.x = -fBallDirection.x
         }
     
-        let maxY = contextHeight - fBallImage!.size.height
+        let maxY = contextHeight - ballSize.height
         
-        if fBallPosition.y < 0
+        if ballPos.y < 0
         {
-            fBallPosition.y = 0
+            ballPos.y = 0
             fBallDirection.y = -fBallDirection.y
         }
-        else if fBallPosition.y >= maxY
+        else if ballPos.y >= maxY
         {
-            fBallPosition.y = maxY - 1
+            ballPos.y = maxY - 1
             fBallDirection.y = -fBallDirection.y
         }
         
-        // hack
-        render()
+        fBallSprite!.position = ballPos
     }
     
     func createScene() -> W2DScene
@@ -204,21 +202,10 @@ class GameController: WKInterfaceController, W2DBehavior
             pt.y += 2 * brickSize.height
         }
         
+        fBallSprite = W2DSprite(named: "ball.png", inContext:f2DContext!)
+        scene.addChild(fBallSprite)
+        
         return scene
-    }
-    
-    func render()
-    {
-        if fLost
-        {
-            f2DContext!.clear(r: 1, g: 0, b: 0, a: 1)
-        }
-        else
-        {
-            f2DContext!.clear(r: 0, g: 0, b: 0, a: 0)
-        }
-    
-        fBallImage?.draw(fBallPosition)
     }
     
     func startGame()
@@ -231,14 +218,15 @@ class GameController: WKInterfaceController, W2DBehavior
         let contextWidth = CGFloat(f2DContext!.width)
         let contextHeight = CGFloat(f2DContext!.height)
         
-        let ballSize = fBallImage!.size
-        fBallPosition.x = contextWidth - (2 * ballSize.width)
-        fBallPosition.y = (contextHeight - ballSize.height) / 2
-    
+        let ballSize = fBallSprite!.size
+        let ballPos = CGPointMake(contextWidth - (2 * ballSize.width), (contextHeight - ballSize.height) / 2)
+        fBallSprite!.position = ballPos
+        
         fBallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
         fBallSpeed = 60.0
     
         fLost = false
+        f2DDirector!.currentScene!.backgroundColor = W2DColor4f()
     }
     
     func totalHeight() -> CGFloat
