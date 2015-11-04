@@ -19,8 +19,6 @@ class GameController: WKInterfaceController, W2DBehavior
     var     fBallDirection : CGPoint = CGPointMake(0, 0)
     var     fBallSpeed : CGFloat = 0;
     
-    var     fPadPosition : CGFloat = 0;
-    var     fPadHeight : CGFloat = 0;
     var     fPadSprite : W2DSprite?
     
     var     fMustStartGame = true;
@@ -33,15 +31,16 @@ class GameController: WKInterfaceController, W2DBehavior
     {
         super.awakeWithContext(context)
         
-        f2DContext = createW2DContext(width:142, height:UInt(GameController.kHeight))
+        let bounds = WKInterfaceDevice.currentDevice().screenBounds
+        print("screen bounds (\(bounds.width) x \(bounds.height)")
+        
+        let contextWidth = UInt(bounds.width) //(bounds.width == 156) ? UInt(142) : UInt(118)
+        let contextHeight = UInt(146)
+        f2DContext = createW2DContext(width:contextWidth, height:contextHeight)
         f2DDirector = createW2DDirector(self.image!, context: f2DContext!)
         f2DDirector!.addBehavior(self) // cycling ref?
         
         f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:40)
-        
-        let padImage = f2DContext!.image(named:"pad.png")
-        fPadHeight = padImage!.size.height
-        fPadSprite = W2DSprite(image: padImage)
         
         f2DDirector!.currentScene = self.createScene()
     }
@@ -85,8 +84,6 @@ class GameController: WKInterfaceController, W2DBehavior
             })
     }
     
-    static let kHeight : CGFloat = 170.0
-    
     func execute(dT: NSTimeInterval)
     {
         if fLost
@@ -118,14 +115,12 @@ class GameController: WKInterfaceController, W2DBehavior
             let minBall =  ballPos.y
             let maxBall = ballPos.y + ballSize.height
             
-            let kPadPos = fPadPosition * contextHeight
+            let kPadPos = fPadSprite!.position.y
             let minPad = kPadPos
-            let maxPad = kPadPos + fPadHeight
+            let maxPad = kPadPos + fPadSprite!.size.height
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                /*ballPos.x = contextWidth / 2
-                ballPos.y = contextHeight / 2*/
                 fLost = true
                 f2DDirector!.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
             
@@ -197,7 +192,7 @@ class GameController: WKInterfaceController, W2DBehavior
         fBallSprite = W2DSprite(named: "ball.png", inContext:f2DContext!)
         scene.addChild(fBallSprite)
         
-        assert(fPadSprite != nil)
+        fPadSprite = W2DSprite(named:"pad.png", inContext:f2DContext!)
         scene.addChild(fPadSprite)
         
         fPadSprite!.position = CGPointMake(CGFloat(f2DContext!.width) - fPadSprite!.size.width, 0)
@@ -207,12 +202,12 @@ class GameController: WKInterfaceController, W2DBehavior
     
     func startGame()
     {
-        fPadPosition = 0.5
-        f2DDirector!.setDigitalCrownValue(Float(fPadPosition))
-        self.setPadPosition(Float(fPadPosition))
-    
         let contextWidth = CGFloat(f2DContext!.width)
         let contextHeight = CGFloat(f2DContext!.height)
+        
+        let normalizedPadY = Float(0.5)
+        f2DDirector!.setDigitalCrownValue(normalizedPadY)
+        self.setPadPosition(normalizedPadY)
         
         let ballSize = fBallSprite!.size
         let ballPos = CGPointMake(contextWidth - (2 * ballSize.width), (contextHeight - ballSize.height) / 2)
@@ -225,17 +220,12 @@ class GameController: WKInterfaceController, W2DBehavior
         f2DDirector!.currentScene!.backgroundColor = W2DColor4f()
     }
     
-    func totalHeight() -> CGFloat
-    {
-        return GameController.kHeight - fPadHeight
-    }
-    
     func setPadPosition(value:Float)
     {
-        fPadPosition = CGFloat(value)
+        let availableHeight = CGFloat(f2DContext!.height) - fPadSprite!.size.height
         
         var pos = fPadSprite!.position
-        pos.y = fPadPosition * totalHeight()
+        pos.y = CGFloat(value) * availableHeight
         fPadSprite!.position = pos
     }
 
