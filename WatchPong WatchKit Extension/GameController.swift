@@ -38,20 +38,7 @@ class GameController: WKInterfaceController, W2DBehavior
         f2DDirector = createW2DDirector(self.image!, context: f2DContext!)
         f2DDirector!.addBehavior(self) // cycling ref?
         
-        var items = [WKPickerItem]();
-        
-        let item = WKPickerItem()
-        item.title = " ";
-        
-        for _ in 1...GameController.kNbItems
-        {
-            items.append(item)
-        }
-        
-        if let picker = self.myPicker
-        {
-            picker.setItems(items)
-        }
+        f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:40)
         
         let padImage = f2DContext!.image(named:"pad.png")
         fPadHeight = padImage!.size.height
@@ -90,12 +77,16 @@ class GameController: WKInterfaceController, W2DBehavior
     
     @IBAction func pickerAction(iIndex: NSInteger)
     {
-        setPadPosition(iIndex)
+        f2DDirector!.processDigitalCrownInput(iIndex, handler:
+            {[weak self](value:Float) in
+                if let this = self
+                {
+                    this.setPadPosition(value)
+                }
+            })
     }
     
     static let kHeight : CGFloat = 170.0
-    static let kNbItems : Int = 40
-    //const unsigned int kNbItems = kTotalHeight;
     
     func execute(dT: NSTimeInterval)
     {
@@ -134,8 +125,8 @@ class GameController: WKInterfaceController, W2DBehavior
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                ballPos.x = contextWidth / 2
-                ballPos.y = contextHeight / 2
+                /*ballPos.x = contextWidth / 2
+                ballPos.y = contextHeight / 2*/
                 fLost = true
                 f2DDirector!.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
             
@@ -218,9 +209,8 @@ class GameController: WKInterfaceController, W2DBehavior
     func startGame()
     {
         fPadPosition = 0.5
-        let kInitialPos = GameController.kNbItems / 2
-        self.myPicker!.setSelectedItemIndex(kInitialPos)
-        self.setPadPosition(kInitialPos)
+        f2DDirector!.setDigitalCrownValue(Float(fPadPosition))
+        self.setPadPosition(Float(fPadPosition))
     
         let contextWidth = CGFloat(f2DContext!.width)
         let contextHeight = CGFloat(f2DContext!.height)
@@ -241,9 +231,9 @@ class GameController: WKInterfaceController, W2DBehavior
         return GameController.kHeight - fPadHeight
     }
     
-    func setPadPosition(index:Int)
+    func setPadPosition(value:Float)
     {
-        fPadPosition = CGFloat(index) / CGFloat(GameController.kNbItems)
+        fPadPosition = CGFloat(value)
     
         let group = self.padContainer
     
