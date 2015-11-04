@@ -14,7 +14,6 @@ class GameController: WKInterfaceController, W2DBehavior
 {
     @IBOutlet var image : WKInterfaceImage?
     @IBOutlet var myPicker: WKInterfacePicker?
-    @IBOutlet var padContainer : WKInterfaceGroup?
     
     var     fBallSprite : W2DSprite?
     var     fBallDirection : CGPoint = CGPointMake(0, 0)
@@ -105,7 +104,7 @@ class GameController: WKInterfaceController, W2DBehavior
         let contextHeight = CGFloat(f2DContext!.height);
         
         let ballSize = fBallSprite!.size
-        let maxX = contextWidth - ballSize.width
+        let maxX = contextWidth - ballSize.width - fPadSprite!.size.width
         
         // make it bounce if hitting on wall
         if ballPos.x < 0
@@ -234,14 +233,6 @@ class GameController: WKInterfaceController, W2DBehavior
     func setPadPosition(value:Float)
     {
         fPadPosition = CGFloat(value)
-    
-        let group = self.padContainer
-    
-        var insets = UIEdgeInsets(top:0, left:0, bottom:0, right:0)
-        insets.top = totalHeight() * (1.0 - fPadPosition)
-    
-        group!.setContentInset(insets)
-        
         
         var pos = fPadSprite!.position
         pos.y = fPadPosition * totalHeight()
