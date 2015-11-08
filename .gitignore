@@ -1,10 +1,4 @@
 .DS_Store
-
-*.pbxuser
-*.perspective
-*.perspectivev3
-
-build/
-xcuserdata/
-
-
+build
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
