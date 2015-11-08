@@ -26,11 +26,9 @@
             <objects>
                 <controller id="AgC-eL-Hgc" userLabel="Game Controller" customClass="GameController" customModule="WatchPong_WatchKit_Extension">
                     <items>
-                        <group width="1" height="1" alignment="left" id="9sY-JB-oRg">
+                        <group width="1" height="146" alignment="left" id="9sY-JB-oRg">
                             <items>
-                                <imageView width="142" height="170" alignment="left" id="gMM-Cd-40M">
-                                    <variation key="device=watch38mm" width="118"/>
-                                </imageView>
+                                <imageView width="1" height="1" alignment="left" id="gMM-Cd-40M"/>
                             </items>
                         </group>
                         <picker width="10" height="2" alignment="right" alpha="0.050000000000000003" style="sequence" id="zqv-VH-yDk">
