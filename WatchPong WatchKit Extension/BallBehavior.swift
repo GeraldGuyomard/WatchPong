@@ -36,6 +36,15 @@ class BallBehavior : W2DComponent, W2DBehavior
             return;
         }
         
+        // try to collide with any collider in the scene
+        let collision = Collider.collideInScene(director.currentScene!, ball: sprite, direction: fBallDirection)
+        if let c = collision
+        {
+            fBallDirection = c.direction
+            ballSprite.position = c.position
+            return
+        }
+        
         var ballPos = ballSprite.position.add(v)
         
         let context = director.context
@@ -43,9 +52,14 @@ class BallBehavior : W2DComponent, W2DBehavior
         let contextWidth = CGFloat(context.width);
         let contextHeight = CGFloat(context.height);
         
-        let level : PongLevel? = director.currentScene!.component()
+
+        guard let level:PongLevel = director.currentScene!.component()
+        else
+        {
+            return
+        }
         
-        let padSprite = level!.fPadSprite!
+        let padSprite = level.fPadSprite!
         
         let ballSize = ballSprite.size
         let maxX = contextWidth - ballSize.width - padSprite.size.width
@@ -68,7 +82,7 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             if (maxBall < minPad) || (minBall > maxPad)
             {
-                level!.onLost(director)
+                level.onLost(director)
             }
             else
             {

@@ -44,6 +44,9 @@ class PongLevel : W2DComponent
             brick.position = pt
             scene.addChild(brick)
             
+            let collider = Collider()
+            brick.addComponent(collider)
+            
             pt.y += 2 * brickSize.height
         }
         
@@ -54,6 +57,9 @@ class PongLevel : W2DComponent
             brick.position = pt
             scene.addChild(brick)
             
+            let collider = Collider()
+            brick.addComponent(collider)
+
             pt.y += 2 * brickSize.height
         }
         
