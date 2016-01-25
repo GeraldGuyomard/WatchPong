@@ -37,11 +37,17 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         
         // try to collide with any collider in the scene
-        let collision = Collider.collideInScene(director.currentScene!, ball: sprite, direction: fBallDirection)
+        let collision = Collider.collideInScene(director.currentScene!, ball: sprite, direction:fBallDirection, speed:fBallSpeed)
         if let c = collision
         {
             fBallDirection = c.direction
+            fBallSpeed = c.speed
             ballSprite.position = c.position
+            
+            if let node = c.node
+            {
+                node.removeFromParent()
+            }
             return
         }
         

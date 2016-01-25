@@ -51,7 +51,7 @@ class PongLevel : W2DComponent
         }
         
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
-        for _ in 1...3
+        for _ in 1...2
         {
             let brick = W2DSprite(image:brickImage!)
             brick.position = pt
