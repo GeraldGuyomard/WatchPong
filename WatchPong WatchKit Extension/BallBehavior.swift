@@ -24,6 +24,12 @@ class BallBehavior : W2DComponent, W2DBehavior
     
     func execute(dT:NSTimeInterval, director:W2DDirector!)
     {
+        guard let level:PongLevel = director.currentScene!.component()
+            else
+        {
+            return
+        }
+        
         let dV = fBallSpeed * CGFloat(dT)
         
         let sprite : W2DSprite? = component()
@@ -56,55 +62,29 @@ class BallBehavior : W2DComponent, W2DBehavior
             {
                 fBallSpeed = 120
             }
-            
-            return
         }
-        
-        let v = fBallDirection.mul(dV);
-        print("v=\(v.x),  \(v.y)")
-        
-        var ballPos = ballSprite.position.add(v)
-        
-        let context = director.context
-        
-        let contextWidth = CGFloat(context.width);
-        let contextHeight = CGFloat(context.height);
-        
-
-        guard let level:PongLevel = director.currentScene!.component()
         else
         {
-            return
+            // move the ball linearly
+            let v = fBallDirection.mul(dV);
+            
+            let newBallPos = ballSprite.position.add(v)
+            
+            let context = director.context
+            let contextWidth = CGFloat(context.width);
+            
+            let ballSize = ballSprite.size
+            let maxX = contextWidth - ballSize.width
+            
+            if newBallPos.x >= maxX // going to far on the right
+            {
+                level.onLost(director)
+            }
+            else
+            {
+                ballSprite.position = newBallPos
+            }
         }
-        
-        let ballSize = ballSprite.size
-        let maxX = contextWidth - ballSize.width //- padSprite.size.width
-        
-        // make it bounce if hitting on wall
-        if ballPos.x < 0
-        {
-            ballPos.x = 0
-            fBallDirection.x = -fBallDirection.x;
-        }
-        else if ballPos.x >= maxX
-        {
-            level.onLost(director)
-        }
-        
-        let maxY = contextHeight - ballSize.height
-        
-        if ballPos.y < 0
-        {
-            ballPos.y = 0
-            fBallDirection.y = -fBallDirection.y
-        }
-        else if ballPos.y >= maxY
-        {
-            ballPos.y = maxY - 1
-            fBallDirection.y = -fBallDirection.y
-        }
-        
-        ballSprite.position = ballPos
     }
 }
 

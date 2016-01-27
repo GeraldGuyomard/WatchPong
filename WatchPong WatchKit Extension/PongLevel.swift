@@ -45,13 +45,32 @@ class PongLevel : W2DComponent
         return brick
     }
     
-    func createScene(director:W2DDirector) -> W2DScene
+    func createBorders(scene:W2DScene, inContext context:W2DContext)
     {
-        let context = director.context
+        let screenSize = CGSizeMake(CGFloat(context.width), CGFloat(context.height))
+        let color = W2DColor4f(red: 1.0, green: 1.0, blue: 1.0)
         
-        let scene = W2DScene()
-        scene.addComponent(self)
+        let topBorder = W2DColoredNode(color: color)
+        topBorder.size = CGSizeMake(screenSize.width, 4.0);
+        topBorder.position = CGPointMake(0, 0)
+        topBorder.addComponent(Collider())
+        scene.addChild(topBorder)
         
+        let bottomBorder = W2DColoredNode(color: color)
+        bottomBorder.size = CGSizeMake(screenSize.width, 4.0);
+        bottomBorder.position = CGPointMake(0, screenSize.height - bottomBorder.size.height)
+        bottomBorder.addComponent(Collider())
+        scene.addChild(bottomBorder)
+        
+        let leftBorder = W2DColoredNode(color: color)
+        leftBorder.size = CGSizeMake(4, screenSize.height);
+        leftBorder.position = CGPointMake(0, 0)
+        leftBorder.addComponent(Collider())
+        scene.addChild(leftBorder)
+    }
+    
+    func createBricks(scene:W2DScene, inContext context:W2DContext)
+    {
         var pt = CGPointMake(16, 0);
         
         let brickImage = context.image(named:"brick-red.png")
@@ -70,10 +89,10 @@ class PongLevel : W2DComponent
         {
             let brick = createBrick(scene, image:brickImage!)
             brick.position = pt
-
+            
             pt.y += brickSize.height * 1.1
         }
-
+        
         pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
         for _ in 1...2
         {
@@ -82,6 +101,17 @@ class PongLevel : W2DComponent
             
             pt.y += brickSize.height * 2
         }
+    }
+    
+    func createScene(director:W2DDirector) -> W2DScene
+    {
+        let scene = W2DScene()
+        scene.addComponent(self)
+        
+        let context = director.context
+        
+        createBorders(scene, inContext:context)
+        createBricks(scene, inContext:context)
         
         fBallSprite = W2DSprite(named: "ball.png", inContext:context)
         scene.addChild(fBallSprite)
