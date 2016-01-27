@@ -56,8 +56,8 @@ public class Collider : W2DComponent
         }
         
         // first easy rejections with AABBs
-        let myBox = myNode.globalBox
-        let otherBox = otherNode.globalBox
+        let myBox = myNode.globalBoundingBox
+        let otherBox = otherNode.globalBoundingBox
         
         var otherMovedBox = otherBox
         otherMovedBox.origin = otherMovedBox.origin.add(direction.mul(instantaneousSpeed))
