@@ -38,7 +38,7 @@ class PongLevel : W2DComponent
         let brickImage = context.image(named:"brick-red.png")
         let brickSize = brickImage!.size
         
-        for _ in 1...3
+        for _ in 1...6
         {
             let brick = W2DSprite(image:brickImage!)
             brick.position = pt
@@ -47,11 +47,11 @@ class PongLevel : W2DComponent
             let collider = Collider()
             brick.addComponent(collider)
             
-            pt.y += 2 * brickSize.height
+            pt.y += brickSize.height * 1.05
         }
         
-        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height)
-        for _ in 1...2
+        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
+        for _ in 1...4
         {
             let brick = W2DSprite(image:brickImage!)
             brick.position = pt
@@ -60,7 +60,20 @@ class PongLevel : W2DComponent
             let collider = Collider()
             brick.addComponent(collider)
 
-            pt.y += 2 * brickSize.height
+            pt.y += brickSize.height * 1.1
+        }
+
+        pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
+        for _ in 1...2
+        {
+            let brick = W2DSprite(image:brickImage!)
+            brick.position = pt
+            scene.addChild(brick)
+            
+            let collider = Collider()
+            brick.addComponent(collider)
+            
+            pt.y += brickSize.height * 2
         }
         
         fBallSprite = W2DSprite(named: "ball.png", inContext:context)

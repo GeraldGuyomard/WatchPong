@@ -25,8 +25,6 @@ class BallBehavior : W2DComponent, W2DBehavior
     func execute(dT:NSTimeInterval, director:W2DDirector!)
     {
         let dV = fBallSpeed * CGFloat(dT)
-        let v = fBallDirection.mul(dV);
-        print("v=\(v.x),  \(v.y)")
         
         let sprite : W2DSprite? = component()
         
@@ -37,19 +35,43 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         
         // try to collide with any collider in the scene
-        let collision = Collider.collideInScene(director.currentScene!, ball: sprite, direction:fBallDirection, speed:fBallSpeed)
-        if let c = collision
+        let collisions = Collider.collideInScene(director.currentScene!, ball: sprite, direction:fBallDirection, instantaneousSpeed:dV)
+        if !collisions.isEmpty
         {
-            fBallDirection = c.direction
-            fBallSpeed = c.speed
-            ballSprite.position = c.position
+            var closestCollision : Collision?
+            var minT = CGFloat.max
             
-            if let node = c.node
+            for c in collisions
             {
-                node.removeFromParent()
+                if (c.t < minT)
+                {
+                    minT = c.t
+                    closestCollision = c
+                }
             }
+            
+            fBallDirection = closestCollision!.direction
+            fBallSpeed *= closestCollision!.bounceSpeedFactor
+            
+            let oldPos = ballSprite.position
+            let newPos = closestCollision!.position
+            let dist = newPos.sub(oldPos).norm()
+            
+            //ballSprite.position = newPos
+            
+            for c in collisions
+            {
+                if let node = c.node
+                {
+                    node.removeFromParent()
+                }
+            }
+
             return
         }
+        
+        let v = fBallDirection.mul(dV);
+        print("v=\(v.x),  \(v.y)")
         
         var ballPos = ballSprite.position.add(v)
         
