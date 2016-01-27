@@ -52,21 +52,11 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             fBallDirection = closestCollision!.direction
             fBallSpeed *= closestCollision!.bounceSpeedFactor
-            
-            let oldPos = ballSprite.position
-            let newPos = closestCollision!.position
-            let dist = newPos.sub(oldPos).norm()
-            
-            //ballSprite.position = newPos
-            
-            for c in collisions
+            if fBallSpeed > 120
             {
-                if let node = c.node
-                {
-                    node.removeFromParent()
-                }
+                fBallSpeed = 120
             }
-
+            
             return
         }
         
@@ -87,10 +77,8 @@ class BallBehavior : W2DComponent, W2DBehavior
             return
         }
         
-        let padSprite = level.fPadSprite!
-        
         let ballSize = ballSprite.size
-        let maxX = contextWidth - ballSize.width - padSprite.size.width
+        let maxX = contextWidth - ballSize.width //- padSprite.size.width
         
         // make it bounce if hitting on wall
         if ballPos.x < 0
@@ -100,33 +88,7 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         else if ballPos.x >= maxX
         {
-            // make sure it bounced on the pad
-            let minBall =  ballPos.y
-            let maxBall = ballPos.y + ballSize.height
-            
-            let kPadPos = padSprite.position.y
-            let minPad = kPadPos
-            let maxPad = kPadPos + padSprite.size.height
-            
-            if (maxBall < minPad) || (minBall > maxPad)
-            {
-                level.onLost(director)
-            }
-            else
-            {
-                ballPos.x = maxX - 1
-                
-                // Bounce
-                WKInterfaceDevice.currentDevice().playHaptic(.Retry)
-                
-                fBallSpeed += 15
-                if fBallSpeed > 120
-                {
-                    fBallSpeed = 120
-                }
-            }
-            
-            fBallDirection.x = -fBallDirection.x
+            level.onLost(director)
         }
         
         let maxY = contextHeight - ballSize.height

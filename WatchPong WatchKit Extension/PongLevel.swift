@@ -26,6 +26,25 @@ class PongLevel : W2DComponent
         }
     }
     
+    func createBrick(scene:W2DScene, image:W2DImage) -> W2DNode
+    {
+        let brick = W2DSprite(image:image)
+        scene.addChild(brick)
+        
+        let collider = Collider()
+        collider.collisionCallback = {
+            [](collision:Collision) -> Collision? in
+            {
+                collision.node.removeFromParent()
+                
+                return collision
+            }()}
+        
+        brick.addComponent(collider)
+        
+        return brick
+    }
+    
     func createScene(director:W2DDirector) -> W2DScene
     {
         let context = director.context
@@ -40,12 +59,8 @@ class PongLevel : W2DComponent
         
         for _ in 1...6
         {
-            let brick = W2DSprite(image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!)
             brick.position = pt
-            scene.addChild(brick)
-            
-            let collider = Collider()
-            brick.addComponent(collider)
             
             pt.y += brickSize.height * 1.05
         }
@@ -53,12 +68,8 @@ class PongLevel : W2DComponent
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
         for _ in 1...4
         {
-            let brick = W2DSprite(image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!)
             brick.position = pt
-            scene.addChild(brick)
-            
-            let collider = Collider()
-            brick.addComponent(collider)
 
             pt.y += brickSize.height * 1.1
         }
@@ -66,12 +77,8 @@ class PongLevel : W2DComponent
         pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
         for _ in 1...2
         {
-            let brick = W2DSprite(image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!)
             brick.position = pt
-            scene.addChild(brick)
-            
-            let collider = Collider()
-            brick.addComponent(collider)
             
             pt.y += brickSize.height * 2
         }
@@ -87,6 +94,17 @@ class PongLevel : W2DComponent
         scene.addChild(fPadSprite)
         
         fPadSprite!.position = CGPointMake(CGFloat(context.width) - fPadSprite!.size.width, 0)
+        
+        let padBeh = Collider()
+        padBeh.bounceSpeedFactor = 1.3
+        padBeh.collisionCallback = {
+        (collision:Collision) -> Collision? in
+        {
+            WKInterfaceDevice.currentDevice().playHaptic(.Retry)
+            return collision
+        }()}
+        
+        fPadSprite!.addComponent(padBeh)
         
         return scene
     }

@@ -12,7 +12,6 @@ import WatchScene2D
 public struct Collision
 {
     public var node : W2DNode!
-    public var position : CGPoint
     public var direction : CGPoint
     public var bounceSpeedFactor: CGFloat
     public var t : CGFloat
