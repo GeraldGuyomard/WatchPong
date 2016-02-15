@@ -98,7 +98,8 @@ public class Collider : W2DComponent
                         if (x >= myBox.origin.x - overhead) && (x <= myBox.origin.x + myBox.size.width + overhead)
                         {
                             let newDirection = CGPointMake(direction.x, -direction.y)
-                            collision = Collision(node:myNode, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.bottom)
+                            let y = (t * direction.y) + pos.y
+                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.bottom)
                         }
                     }
                 }
@@ -115,7 +116,8 @@ public class Collider : W2DComponent
                         if (x >= myBox.origin.x - overhead) && (x <= myBox.origin.x + myBox.size.width + overhead)
                         {
                             let newDirection = CGPointMake(direction.x, -direction.y)
-                            collision = Collision(node:myNode, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.top)
+                            let y = (t * direction.y) + pos.y
+                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.top)
                         }
                     }
                 }
@@ -138,7 +140,8 @@ public class Collider : W2DComponent
                         if (y >= myBox.origin.y - overhead) && (y <= myBox.origin.y + myBox.size.height + overhead)
                         {
                             let newDirection = CGPointMake(-direction.x, direction.y)
-                            collision = Collision(node:myNode, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.left)
+                            let x = (t * direction.x) + pos.x
+                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.left)
                         }
                     }
                 }
@@ -155,7 +158,8 @@ public class Collider : W2DComponent
                         if (y >= myBox.origin.y - overhead) && (y <= myBox.origin.y + myBox.size.height + overhead)
                         {
                             let newDirection = CGPointMake(-direction.x, direction.y)
-                            collision = Collision(node:myNode, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.right)
+                            let x = (t * direction.x) + pos.x
+                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.right)
                         }
                     }
                 }

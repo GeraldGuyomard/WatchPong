@@ -144,9 +144,34 @@ public class PongLevel : W2DComponent, W2DBehavior
         let padBeh = Collider()
         padBeh.bounceSpeedFactor = 1.3
         padBeh.collisionCallback = {
-            (collision:Collision) -> Collision? in
+            (var collision:Collision) -> Collision? in
             {
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
+                
+                if (collision.edge == .left)
+                {
+                    // deviate the direction depending on distance to middle
+                    let hitY = collision.hitPoint.y
+                    let myBox = collision.node.globalBoundingBox
+                    assert(hitY >= myBox.origin.y)
+                    assert(hitY <= myBox.origin.y + myBox.size.height)
+                    
+                    let middleY = myBox.origin.y + myBox.size.height / 2
+                    var normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
+                    normalizedDist *= normalizedDist
+                    
+                    assert(normalizedDist <= 1.0)
+                    assert(normalizedDist >= -1.0)
+                    
+                    let deviationRange: CGFloat = 35.0
+                    let deviationAngle = (-normalizedDist * deviationRange) * CGFloat(M_PI) / 180.0
+                    
+                    let rotation = CGAffineTransformMakeRotation(deviationAngle)
+                    let deviatedDirection = CGPointApplyAffineTransform(collision.direction, rotation)
+                    
+                    collision.direction = deviatedDirection.normalizedVector()
+                }
+                
                 return collision
             }()}
         
