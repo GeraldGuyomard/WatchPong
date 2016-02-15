@@ -13,23 +13,31 @@ class BallBehavior : W2DComponent, W2DBehavior
 {
     var     fBallDirection : CGPoint = CGPointMake(0, 0)
     var     fBallSpeed : CGFloat = 0;
-
+    
     override init()
     {
         super.init()
         
-        fBallDirection = CGPoint(x:-0.6, y:-1.0).normalizedVector()
+        // random angle between -45 and 45
+        let rInt = rand()
+        let r = Float(Double(rInt) / Double(RAND_MAX))
+        let minV : Float = -45.0
+        let maxV : Float = 45.0
+        let a = (r * (maxV - minV)) + minV
+        
+        let angle = Float(a) * Float(M_PI) / 180
+        
+        let x = CGFloat(-cosf(angle))
+        let y = CGFloat(-sinf(angle))
+        
+        // normalization is in theory already normalized...
+        fBallDirection = CGPoint(x:x, y:y).normalizedVector()
+        
         fBallSpeed = 60.0
     }
     
     func execute(dT:NSTimeInterval, director:W2DDirector!)
     {
-        guard let level:PongLevel = director.currentScene!.component()
-            else
-        {
-            return
-        }
-        
         let dV = fBallSpeed * CGFloat(dT)
         
         let sprite : W2DSprite? = component()
@@ -70,18 +78,6 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             let newBallPos = ballSprite.position.add(v)
             ballSprite.position = newBallPos
-            
-            /*
-            let context = director.context
-            let contextWidth = CGFloat(context.width);
-            
-            let ballSize = ballSprite.size
-            let maxX = contextWidth - ballSize.width
-            
-            if newBallPos.x >= maxX // going to far on the right
-            {
-                level.onLost(director)
-            }*/
         }
     }
 }
