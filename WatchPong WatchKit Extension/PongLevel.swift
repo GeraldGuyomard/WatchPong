@@ -9,7 +9,7 @@
 import WatchKit
 import WatchScene2D
 
-class PongLevel : W2DComponent
+public class PongLevel : W2DComponent, W2DBehavior
 {
     var     fBalls =  [W2DNode]()
     var     fPads = [W2DNode]()
@@ -26,7 +26,27 @@ class PongLevel : W2DComponent
         }
     }
     
-    func createBrick(scene:W2DScene, image:W2DImage) -> W2DNode
+    public func execute(dT:NSTimeInterval, director:W2DDirector!)
+    {
+        // make sure all balls are still in game
+        let context = director.context
+        let contextWidth = CGFloat(context.width);
+        
+        for ball in fBalls
+        {
+            let ballSize = ball.size
+            let maxX = contextWidth - ballSize.width
+            
+            let pos = ball.position
+            if pos.x >= maxX // going to far on the right
+            {
+                onLost(director)
+                break
+            }
+        }
+    }
+    
+    private func createBrick(scene:W2DScene, image:W2DImage) -> W2DNode
     {
         let brick = W2DSprite(image:image)
         scene.addChild(brick)
@@ -45,7 +65,7 @@ class PongLevel : W2DComponent
         return brick
     }
     
-    func createBorders(scene:W2DScene, inContext context:W2DContext)
+    private func createBorders(scene:W2DScene, inContext context:W2DContext)
     {
         let screenSize = CGSizeMake(CGFloat(context.width), CGFloat(context.height))
         let color = W2DColor4f(red: 1.0, green: 1.0, blue: 1.0)
@@ -69,7 +89,7 @@ class PongLevel : W2DComponent
         scene.addChild(leftBorder)
     }
     
-    func createBricks(scene:W2DScene, inContext context:W2DContext)
+    private func createBricks(scene:W2DScene, inContext context:W2DContext)
     {
         var pt = CGPointMake(16, 0);
         
@@ -103,7 +123,7 @@ class PongLevel : W2DComponent
         }
     }
     
-    func createBall(scene:W2DScene, inDirector director:W2DDirector) -> W2DNode
+    private func createBall(scene:W2DScene, inDirector director:W2DDirector) -> W2DNode
     {
         let sprite = W2DSprite(named: "ball.png", inContext:director.context)
         scene.addChild(sprite)
@@ -115,7 +135,7 @@ class PongLevel : W2DComponent
         return sprite
     }
     
-    func createPad(scene:W2DScene, inContext context:W2DContext) -> W2DNode
+    private func createPad(scene:W2DScene, inContext context:W2DContext) -> W2DNode
     {
         let sprite = W2DSprite(named:"pad.png", inContext:context)
         scene.addChild(sprite)
@@ -135,7 +155,7 @@ class PongLevel : W2DComponent
         return sprite
     }
     
-    func createScene(director:W2DDirector) -> W2DScene
+    public func createScene(director:W2DDirector) -> W2DScene
     {
         let scene = W2DScene()
         scene.addComponent(self)
@@ -154,8 +174,10 @@ class PongLevel : W2DComponent
         return scene
     }
     
-    func startGame(director:W2DDirector!)
+    private func startGame(director:W2DDirector!)
     {
+        director.addBehavior(self)
+        
         let context = director.context
         
         let contextWidth = CGFloat(context.width)
@@ -176,7 +198,7 @@ class PongLevel : W2DComponent
         director.currentScene!.backgroundColor = W2DColor4f()
     }
 
-    func onLost(director:W2DDirector!)
+    private func onLost(director:W2DDirector!)
     {
         fLost = true
         director.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
@@ -186,7 +208,7 @@ class PongLevel : W2DComponent
         director.stop()
     }
     
-    func setPadPosition(value:Float, director:W2DDirector!)
+    internal func setPadPosition(value:Float, director:W2DDirector!)
     {
         let context = director.context
         
