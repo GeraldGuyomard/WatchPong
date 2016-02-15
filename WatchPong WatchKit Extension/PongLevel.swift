@@ -11,8 +11,8 @@ import WatchScene2D
 
 class PongLevel : W2DComponent
 {
-    var     fBallSprite : W2DSprite?
-    var     fPadSprite : W2DSprite?
+    var     fBalls =  [W2DNode]()
+    var     fPads = [W2DNode]()
     
     var     fMustStartGame = true;
     var     fLost = false;
@@ -103,6 +103,38 @@ class PongLevel : W2DComponent
         }
     }
     
+    func createBall(scene:W2DScene, inDirector director:W2DDirector) -> W2DNode
+    {
+        let sprite = W2DSprite(named: "ball.png", inContext:director.context)
+        scene.addChild(sprite)
+        
+        let ballBeh = BallBehavior()
+        sprite.addComponent(ballBeh)
+        director.addBehavior(ballBeh)
+ 
+        return sprite
+    }
+    
+    func createPad(scene:W2DScene, inContext context:W2DContext) -> W2DNode
+    {
+        let sprite = W2DSprite(named:"pad.png", inContext:context)
+        scene.addChild(sprite)
+        
+        sprite.position = CGPointMake(CGFloat(context.width) - sprite.size.width, 0)
+        let padBeh = Collider()
+        padBeh.bounceSpeedFactor = 1.3
+        padBeh.collisionCallback = {
+            (collision:Collision) -> Collision? in
+            {
+                WKInterfaceDevice.currentDevice().playHaptic(.Retry)
+                return collision
+            }()}
+        
+        sprite.addComponent(padBeh)
+        
+        return sprite
+    }
+    
     func createScene(director:W2DDirector) -> W2DScene
     {
         let scene = W2DScene()
@@ -113,28 +145,11 @@ class PongLevel : W2DComponent
         createBorders(scene, inContext:context)
         createBricks(scene, inContext:context)
         
-        fBallSprite = W2DSprite(named: "ball.png", inContext:context)
-        scene.addChild(fBallSprite)
+        let ball = createBall(scene, inDirector:director)
+        fBalls.append(ball)
         
-        let ballBeh = BallBehavior()
-        fBallSprite?.addComponent(ballBeh)
-        director.addBehavior(ballBeh)
-        
-        fPadSprite = W2DSprite(named:"pad.png", inContext:context)
-        scene.addChild(fPadSprite)
-        
-        fPadSprite!.position = CGPointMake(CGFloat(context.width) - fPadSprite!.size.width, 0)
-        
-        let padBeh = Collider()
-        padBeh.bounceSpeedFactor = 1.3
-        padBeh.collisionCallback = {
-        (collision:Collision) -> Collision? in
-        {
-            WKInterfaceDevice.currentDevice().playHaptic(.Retry)
-            return collision
-        }()}
-        
-        fPadSprite!.addComponent(padBeh)
+        let pad = createPad(scene, inContext:context)
+        fPads.append(pad)
         
         return scene
     }
@@ -150,10 +165,13 @@ class PongLevel : W2DComponent
         director.setDigitalCrownValue(normalizedPadY)
         self.setPadPosition(normalizedPadY, director:director)
         
-        let ballSize = fBallSprite!.size
-        let ballPos = CGPointMake(contextWidth - (2 * ballSize.width), (contextHeight - ballSize.height) / 2)
-        fBallSprite!.position = ballPos
-        
+        for ball in fBalls
+        {
+            let ballSize = ball.size
+            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width), (contextHeight - ballSize.height) / 2)
+            ball.position = ballPos
+        }
+
         fLost = false
         director.currentScene!.backgroundColor = W2DColor4f()
     }
@@ -171,11 +189,15 @@ class PongLevel : W2DComponent
     func setPadPosition(value:Float, director:W2DDirector!)
     {
         let context = director.context
-        let availableHeight = CGFloat(context.height) - fPadSprite!.size.height
         
-        var pos = fPadSprite!.position
-        pos.y = CGFloat(value) * availableHeight
-        fPadSprite!.position = pos
+        for pad in fPads
+        {
+            let availableHeight = CGFloat(context.height) - pad.size.height
+            
+            var pos = pad.position
+            pos.y = CGFloat(value) * availableHeight
+            pad.position = pos
+        }
     }
 
 }

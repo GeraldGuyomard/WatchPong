@@ -69,6 +69,7 @@ class BallBehavior : W2DComponent, W2DBehavior
             let v = fBallDirection.mul(dV);
             
             let newBallPos = ballSprite.position.add(v)
+            ballSprite.position = newBallPos
             
             let context = director.context
             let contextWidth = CGFloat(context.width);
@@ -79,10 +80,6 @@ class BallBehavior : W2DComponent, W2DBehavior
             if newBallPos.x >= maxX // going to far on the right
             {
                 level.onLost(director)
-            }
-            else
-            {
-                ballSprite.position = newBallPos
             }
         }
     }
