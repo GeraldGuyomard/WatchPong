@@ -158,17 +158,18 @@ public class PongLevel : W2DComponent, W2DBehavior
                     
                     let middleY = myBox.origin.y + myBox.size.height / 2
                     var normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
-                    normalizedDist *= normalizedDist
+                    //normalizedDist *= normalizedDist
                     
                     assert(normalizedDist <= 1.0)
                     assert(normalizedDist >= -1.0)
                     
-                    let deviationRange: CGFloat = 35.0
-                    let deviationAngle = (-normalizedDist * deviationRange) * CGFloat(M_PI) / 180.0
+                    let deviationRange: CGFloat = 20.0
+                    let deviationAngleInDegree = (-normalizedDist * deviationRange)
+                    let deviationAngle = deviationAngleInDegree * CGFloat(M_PI) / 180.0
                     
                     let rotation = CGAffineTransformMakeRotation(deviationAngle)
                     let deviatedDirection = CGPointApplyAffineTransform(collision.direction, rotation)
-                    
+                                        
                     collision.direction = deviatedDirection.normalizedVector()
                 }
                 
