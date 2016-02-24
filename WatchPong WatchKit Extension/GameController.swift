@@ -29,6 +29,8 @@ class GameController: WKInterfaceController
         let contextHeight = UInt(146)
         let context = createW2DContext(width:contextWidth, height:contextHeight)
         f2DDirector = createW2DDirector(self.image!, context: context)
+        //f2DDirector!.smartRedrawEnabled  = true
+        f2DDirector!.showDirtyRects = true
         
         f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:40)
         

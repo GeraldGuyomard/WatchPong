@@ -48,7 +48,7 @@ public class PongLevel : W2DComponent, W2DBehavior
     
     private func createBrick(scene:W2DScene, image:W2DImage) -> W2DNode
     {
-        let brick = W2DSprite(image:image)
+        let brick = W2DSprite(image:image, director:scene.director!)
         scene.addChild(brick)
         
         let collider = Collider()
@@ -65,35 +65,40 @@ public class PongLevel : W2DComponent, W2DBehavior
         return brick
     }
     
-    private func createBorders(scene:W2DScene, inContext context:W2DContext)
+    private func createBorders(scene:W2DScene)
     {
+        let director = scene.director!
+        
+        let context = director.context
         let screenSize = CGSizeMake(CGFloat(context.width), CGFloat(context.height))
         let color = W2DColor4f(red: 1.0, green: 1.0, blue: 1.0)
         
-        let topBorder = W2DColoredNode(color: color)
+        let topBorder = W2DColoredNode(color: color, director: director)
         topBorder.size = CGSizeMake(screenSize.width, 4.0);
         topBorder.position = CGPointMake(0, 0)
         topBorder.addComponent(Collider())
         scene.addChild(topBorder)
         
-        let bottomBorder = W2DColoredNode(color: color)
+        let bottomBorder = W2DColoredNode(color: color, director: director)
         bottomBorder.size = CGSizeMake(screenSize.width, 4.0);
         bottomBorder.position = CGPointMake(0, screenSize.height - bottomBorder.size.height)
         bottomBorder.addComponent(Collider())
         scene.addChild(bottomBorder)
         
-        let leftBorder = W2DColoredNode(color: color)
+        let leftBorder = W2DColoredNode(color: color, director: director)
         leftBorder.size = CGSizeMake(4, screenSize.height);
         leftBorder.position = CGPointMake(0, 0)
         leftBorder.addComponent(Collider())
         scene.addChild(leftBorder)
     }
     
-    private func createBricks(scene:W2DScene, inContext context:W2DContext)
+    private func createBricks(scene:W2DScene)
     {
         var pt = CGPointMake(16, 0);
         
-        let brickImage = context.image(named:"brick-red.png")
+        let director = scene.director!
+        
+        let brickImage = director.context.image(named:"brick-red.png")
         let brickSize = brickImage!.size
         
         for _ in 1...6
@@ -123,9 +128,11 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    private func createBall(scene:W2DScene, inDirector director:W2DDirector) -> W2DNode
+    private func createBall(scene:W2DScene) -> W2DNode
     {
-        let sprite = W2DSprite(named: "ball.png", inContext:director.context)
+        let director = scene.director!
+        
+        let sprite = W2DSprite(named: "ball.png", inDirector:director)
         scene.addChild(sprite)
         
         let ballBeh = BallBehavior()
@@ -135,12 +142,14 @@ public class PongLevel : W2DComponent, W2DBehavior
         return sprite
     }
     
-    private func createPad(scene:W2DScene, inContext context:W2DContext) -> W2DNode
+    private func createPad(scene:W2DScene) -> W2DNode
     {
-        let sprite = W2DSprite(named:"pad.png", inContext:context)
+        let director = scene.director!
+        
+        let sprite = W2DSprite(named:"pad.png", inDirector: director)
         scene.addChild(sprite)
         
-        sprite.position = CGPointMake(CGFloat(context.width) - sprite.size.width, 0)
+        sprite.position = CGPointMake(CGFloat(director.context.width) - sprite.size.width, 0)
         let padBeh = Collider()
         padBeh.bounceSpeedFactor = 1.3
         padBeh.collisionCallback = {
@@ -183,18 +192,16 @@ public class PongLevel : W2DComponent, W2DBehavior
     
     public func createScene(director:W2DDirector) -> W2DScene
     {
-        let scene = W2DScene()
+        let scene = W2DScene(director: director)
         scene.addComponent(self)
         
-        let context = director.context
+        createBorders(scene)
+        createBricks(scene)
         
-        createBorders(scene, inContext:context)
-        createBricks(scene, inContext:context)
-        
-        let ball = createBall(scene, inDirector:director)
+        let ball = createBall(scene)
         fBalls.append(ball)
         
-        let pad = createPad(scene, inContext:context)
+        let pad = createPad(scene)
         fPads.append(pad)
         
         return scene
