@@ -55,7 +55,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         let collider = Collider()
         brick.addComponent(collider)
-        brick.addComponent(Brick())
+        brick.addComponent(Brick(maxHealth: 3))
         
         return brick
     }

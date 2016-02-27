@@ -11,6 +11,15 @@ import WatchScene2D
 
 class Brick : W2DComponent
 {
+    var fMaxHealth : Int
+    var fHealth : Int
+    
+    init(maxHealth:Int)
+    {
+        fMaxHealth = maxHealth
+        fHealth = maxHealth
+    }
+    
     override func onComponentAdded(newHead:W2DComponent)
     {
         super.onComponentAdded(newHead)
@@ -21,12 +30,14 @@ class Brick : W2DComponent
             collider.collisionCallback = {
                 [weak self](collision:Collision) -> Collision? in
                 {
-                    if self != nil
+                    if let myself = self
                     {
-                        collision.node.removeFromParent()
+                        return myself.handleCollision(collision)
                     }
-                    
-                    return collision
+                    else
+                    {
+                        return collision
+                    }
                 }()}
         }
     }
@@ -40,5 +51,23 @@ class Brick : W2DComponent
         }
         
         super.onComponentRemoved(oldHead, oldComponent:oldComponent)
+    }
+    
+    func handleCollision(collision:Collision) -> Collision
+    {
+        assert(fHealth > 0)
+        let myNode = collision.node
+        
+        if --fHealth == 0
+        {
+            myNode.removeFromParent()
+        }
+        else
+        {
+            let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
+            myNode.alpha = alpha
+        }
+        
+        return collision
     }
 }
