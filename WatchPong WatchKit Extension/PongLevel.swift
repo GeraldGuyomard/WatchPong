@@ -46,10 +46,12 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    private func createBrick(scene:W2DScene, image:W2DImage) -> W2DNode
+    private func createBrick(scene:W2DScene, image:W2DImage, id:Int) -> W2DNode
     {
         let brick = W2DSprite(image:image, director:scene.director!)
         scene.addChild(brick)
+        
+        brick.debugName = "brick \(id)"
         
         let collider = Collider()
         collider.collisionCallback = {
@@ -77,18 +79,21 @@ public class PongLevel : W2DComponent, W2DBehavior
         topBorder.size = CGSizeMake(screenSize.width, 4.0);
         topBorder.position = CGPointMake(0, 0)
         topBorder.addComponent(Collider())
+        topBorder.debugName = "topBorder"
         scene.addChild(topBorder)
         
         let bottomBorder = W2DColoredNode(color: color, director: director)
         bottomBorder.size = CGSizeMake(screenSize.width, 4.0);
         bottomBorder.position = CGPointMake(0, screenSize.height - bottomBorder.size.height)
         bottomBorder.addComponent(Collider())
+        topBorder.debugName = "bottomBorder"
         scene.addChild(bottomBorder)
         
         let leftBorder = W2DColoredNode(color: color, director: director)
         leftBorder.size = CGSizeMake(4, screenSize.height);
         leftBorder.position = CGPointMake(0, 0)
         leftBorder.addComponent(Collider())
+        topBorder.debugName = "leftBorder"
         scene.addChild(leftBorder)
     }
     
@@ -101,9 +106,11 @@ public class PongLevel : W2DComponent, W2DBehavior
         let brickImage = director.context.image(named:"brick-red.png")
         let brickSize = brickImage!.size
         
+        var id = 0
+        
         for _ in 1...6
         {
-            let brick = createBrick(scene, image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!, id:id++)
             brick.position = pt
             
             pt.y += brickSize.height * 1.05
@@ -112,7 +119,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
         for _ in 1...4
         {
-            let brick = createBrick(scene, image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!, id:id++)
             brick.position = pt
             
             pt.y += brickSize.height * 1.1
@@ -121,7 +128,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
         for _ in 1...2
         {
-            let brick = createBrick(scene, image:brickImage!)
+            let brick = createBrick(scene, image:brickImage!, id:id++)
             brick.position = pt
             
             pt.y += brickSize.height * 2
@@ -133,6 +140,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         let director = scene.director!
         
         let sprite = W2DSprite(named: "ball.png", inDirector:director)
+        sprite.debugName = "ball"
         scene.addChild(sprite)
         
         let ballBeh = BallBehavior()
@@ -147,6 +155,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         let director = scene.director!
         
         let sprite = W2DSprite(named:"pad.png", inDirector: director)
+        sprite.debugName = "pad"
         scene.addChild(sprite)
         
         sprite.position = CGPointMake(CGFloat(director.context.width) - sprite.size.width, 0)
