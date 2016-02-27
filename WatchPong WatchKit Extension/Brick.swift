@@ -65,7 +65,10 @@ class Brick : W2DComponent
         else
         {
             let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
-            myNode.alpha = alpha
+            let action = W2DFadeToAction(target: myNode, duration: 0.25, finalAlpha: alpha)
+            
+            action.start()
+            //myNode.alpha = alpha
         }
         
         return collision

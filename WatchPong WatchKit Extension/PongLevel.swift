@@ -46,7 +46,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    private func createBrick(scene:W2DScene, image:W2DImage, id:Int) -> W2DNode
+    private func createBrick(scene:W2DScene, image:W2DImage, id:Int, health:Int) -> W2DNode
     {
         let brick = W2DSprite(image:image, director:scene.director!)
         scene.addChild(brick)
@@ -55,7 +55,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         let collider = Collider()
         brick.addComponent(collider)
-        brick.addComponent(Brick(maxHealth: 3))
+        brick.addComponent(Brick(maxHealth: health))
         
         return brick
     }
@@ -103,7 +103,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         for _ in 1...6
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++)
+            let brick = createBrick(scene, image:brickImage!, id:id++, health:3)
             brick.position = pt
             
             pt.y += brickSize.height * 1.05
@@ -112,7 +112,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
         for _ in 1...4
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++)
+            let brick = createBrick(scene, image:brickImage!, id:id++, health:2)
             brick.position = pt
             
             pt.y += brickSize.height * 1.1
@@ -121,7 +121,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
         for _ in 1...2
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++)
+            let brick = createBrick(scene, image:brickImage!, id:id++, health:1)
             brick.position = pt
             
             pt.y += brickSize.height * 2
