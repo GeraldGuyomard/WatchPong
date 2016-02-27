@@ -54,15 +54,8 @@ public class PongLevel : W2DComponent, W2DBehavior
         brick.debugName = "brick \(id)"
         
         let collider = Collider()
-        collider.collisionCallback = {
-            [](collision:Collision) -> Collision? in
-            {
-                collision.node.removeFromParent()
-                
-                return collision
-            }()}
-        
         brick.addComponent(collider)
+        brick.addComponent(Brick())
         
         return brick
     }

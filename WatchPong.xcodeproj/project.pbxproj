@@ -11,6 +11,7 @@
 		743D8ABD1BB1C6A70032B97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 748736C81BA654E100782540 /* Assets.xcassets */; };
 		743D8ABE1BB1C6C30032B97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 748736C81BA654E100782540 /* Assets.xcassets */; };
 		743D8ABF1BB1C6C40032B97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 748736C81BA654E100782540 /* Assets.xcassets */; };
+		74426D5C1C825FA200068074 /* Brick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74426D5B1C825FA200068074 /* Brick.swift */; };
 		7456AB671C5479550024F967 /* Collider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7456AB651C5479550024F967 /* Collider.swift */; };
 		7456AB681C5479550024F967 /* Collision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7456AB661C5479550024F967 /* Collision.swift */; };
 		748736A21BA654E000782540 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748736A11BA654E000782540 /* AppDelegate.swift */; };
@@ -108,6 +109,7 @@
 
 /* Begin PBXFileReference section */
 		743543B41BB0EC2100F254EB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		74426D5B1C825FA200068074 /* Brick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brick.swift; sourceTree = "<group>"; };
 		7456AB651C5479550024F967 /* Collider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collider.swift; sourceTree = "<group>"; };
 		7456AB661C5479550024F967 /* Collision.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collision.swift; sourceTree = "<group>"; };
 		7487369E1BA654E000782540 /* WatchPong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WatchPong.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -211,6 +213,7 @@
 				748E9FB41C4C2D69000B074C /* PongLevel.swift */,
 				7456AB651C5479550024F967 /* Collider.swift */,
 				7456AB661C5479550024F967 /* Collision.swift */,
+				74426D5B1C825FA200068074 /* Brick.swift */,
 			);
 			path = "WatchPong WatchKit Extension";
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				7456AB681C5479550024F967 /* Collision.swift in Sources */,
 				7456AB671C5479550024F967 /* Collider.swift in Sources */,
 				748736C51BA654E100782540 /* GameController.swift in Sources */,
+				74426D5C1C825FA200068074 /* Brick.swift in Sources */,
 				748E9FB31C4C2851000B074C /* BallBehavior.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
