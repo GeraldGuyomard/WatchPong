@@ -230,7 +230,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
 
         fLost = false
-        director.currentScene!.backgroundColor = W2DColor4f(red: 0, green: 0, blue: 0)
+        director.currentScene!.backgroundColor = W2DColor4f(red: 0, green: 0, blue: 0, alpha: 0)
     }
 
     private func onLost(director:W2DDirector!)
