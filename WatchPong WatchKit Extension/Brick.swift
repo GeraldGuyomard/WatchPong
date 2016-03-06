@@ -13,6 +13,7 @@ class Brick : W2DComponent
 {
     var fMaxHealth : Int
     var fHealth : Int
+    var fCollisionAction : W2DAction? = nil
     
     init(maxHealth:Int)
     {
@@ -64,11 +65,12 @@ class Brick : W2DComponent
         }
         else
         {
-            let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
-            let action = W2DFadeToAction(target: myNode, duration: 0.25, finalAlpha: alpha)
+            fCollisionAction?.stop()
             
-            action.start()
-            //myNode.alpha = alpha
+            let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
+            fCollisionAction = W2DFadeToAction(target: myNode, duration: 0.25, finalAlpha: alpha)
+            
+            fCollisionAction!.start()
         }
         
         return collision
