@@ -12,6 +12,8 @@ import WatchScene2D
 
 public class Collider : W2DComponent
 {
+    public var isActive = true
+    
     static public func collideInScene(scene:W2DScene!, ball:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> [Collision]
     {
         var collisions = [Collision]()
@@ -48,6 +50,11 @@ public class Collider : W2DComponent
     
     public func collide(otherNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> Collision?
     {
+        if !self.isActive
+        {
+            return nil
+        }
+        
         let m : W2DNode? = component()
         guard let myNode = m
         else
