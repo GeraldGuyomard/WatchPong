@@ -61,17 +61,31 @@ class Brick : W2DComponent
         
         if --fHealth == 0
         {
-            myNode.removeFromParent()
+            let collider : Collider? = component()
+            collider?.isActive = false
         }
-        else
-        {
-            fCollisionAction?.stop()
-            
-            let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
-            fCollisionAction = W2DFadeToAction(duration: 0.25, finalAlpha: alpha)
-            
-            myNode.run(fCollisionAction!)
-        }
+        
+        fCollisionAction?.stop()
+        
+        let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
+        let action = W2DFadeToAction(duration: 0.25, finalAlpha: alpha)
+        let completion = W2DCallbackAction(callback: {[weak self](target:W2DNode?) in
+                if let this = self
+                {
+                    if this.fHealth == 0
+                    {
+                        myNode.removeFromParent()
+                    }
+                }
+            })
+        
+        let seq = W2DSequenceAction()
+        seq.addAction(action)
+        seq.addAction(completion)
+        
+        fCollisionAction = seq
+        
+        myNode.run(fCollisionAction!)
         
         return collision
     }
