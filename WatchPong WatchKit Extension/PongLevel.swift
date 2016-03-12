@@ -134,6 +134,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         let sprite = W2DSprite(named: "ball.png", inDirector:director)
         sprite.debugName = "ball"
+        sprite.anchorPoint = CGPointMake(0.5, 0.5)
         scene.addChild(sprite)
         
         let ballBeh = BallBehavior()
