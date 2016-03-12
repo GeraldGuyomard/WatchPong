@@ -66,9 +66,9 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             fBallDirection = closestCollision!.direction
             fBallSpeed *= closestCollision!.bounceSpeedFactor
-            if fBallSpeed > 120
+            if fBallSpeed > 80
             {
-                fBallSpeed = 120
+                fBallSpeed = 80
             }
         }
         else
