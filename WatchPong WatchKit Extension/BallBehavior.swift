@@ -64,11 +64,21 @@ class BallBehavior : W2DComponent, W2DBehavior
                 }
             }
             
+            // move back the ball
+            let edgeNormal = closestCollision!.edge.normal
+            let stepBack = edgeNormal.mul(closestCollision!.t /* * 1.1 */)
+            let newPos = closestCollision!.hitPoint.add(stepBack)
+            
+            ballSprite.position = newPos
+            
             fBallDirection = closestCollision!.direction
             fBallSpeed *= closestCollision!.bounceSpeedFactor
-            if fBallSpeed > 80
+            
+            let maxBallSpeed :CGFloat = 120
+            
+            if fBallSpeed > maxBallSpeed
             {
-                fBallSpeed = 80
+                fBallSpeed = maxBallSpeed
             }
         }
         else

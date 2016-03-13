@@ -23,6 +23,20 @@ public struct Collision
         case top
         case right
         case bottom
+        
+        var normal : CGPoint
+        {
+            get
+            {
+                switch self
+                {
+                    case .left : return CGPointMake(-1, 0)
+                    case .right : return CGPointMake(1, 0)
+                    case .top : return CGPointMake(0, 1)
+                    case .bottom : return CGPointMake(0, -1)
+                }
+            }
+        }
     }
     
     public var edge : Edge

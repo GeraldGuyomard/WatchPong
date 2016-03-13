@@ -33,12 +33,10 @@ public class PongLevel : W2DComponent, W2DBehavior
         let contextWidth = CGFloat(context.width);
         
         for ball in fBalls
-        {
-            let ballSize = ball.size
-            let maxX = contextWidth - ballSize.width
-            
-            let pos = ball.position
-            if pos.x >= maxX // going to far on the right
+        {            
+            let ballBox = ball.globalBoundingBox
+            let ballPos = ballBox.origin.x + ballBox.size.width
+            if ballPos >= contextWidth // going to far on the right
             {
                 onLost(director)
                 break
@@ -165,15 +163,15 @@ public class PongLevel : W2DComponent, W2DBehavior
                     // deviate the direction depending on distance to middle
                     let hitY = collision.hitPoint.y
                     let myBox = collision.node.globalBoundingBox
-                    assert(hitY >= myBox.origin.y)
-                    assert(hitY <= myBox.origin.y + myBox.size.height)
+                    //assert(hitY >= myBox.origin.y)
+                    //assert(hitY <= myBox.origin.y + myBox.size.height)
                     
                     let middleY = myBox.origin.y + myBox.size.height / 2
                     var normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
                     //normalizedDist *= normalizedDist
                     
-                    assert(normalizedDist <= 1.0)
-                    assert(normalizedDist >= -1.0)
+                    //assert(normalizedDist <= 1.0)
+                    //assert(normalizedDist >= -1.0)
                     
                     let deviationRange: CGFloat = 20.0
                     let deviationAngleInDegree = (-normalizedDist * deviationRange)

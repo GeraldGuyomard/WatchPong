@@ -47,7 +47,7 @@ public class Collider : W2DComponent
     public var bounceSpeedFactor : CGFloat = 1.0
     
     public var collisionCallback : ((collision:Collision) -> Collision?)?
-    
+
     public func collide(otherNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> Collision?
     {
         if !self.isActive
@@ -57,7 +57,7 @@ public class Collider : W2DComponent
         
         let m : W2DNode? = component()
         guard let myNode = m
-        else
+            else
         {
             return nil
         }
@@ -77,99 +77,45 @@ public class Collider : W2DComponent
         }
         
         // ray box intersection is happening now
-        let radius = otherBox.size.width
-        let halfRadius = radius / 2.0
-        let pos = CGPointMake(otherBox.origin.x + halfRadius, otherBox.origin.y + halfRadius)
+        let radius = otherBox.size.width / 2.0
+        let pos = CGPointMake(otherBox.origin.x + radius, otherBox.origin.y + radius)
         
-        var collision: Collision? = nil
+        var collision : Collision? = nil
         
-        //let overhead = halfRadius
-        let overhead : CGFloat = 0
-        //let overhead : CGFloat = radius / 4
+        let A = myBox.origin
+        let B = CGPointMake(myBox.origin.x, myBox.origin.y + myBox.size.height)
+        let C = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y + myBox.size.height)
+        let D = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y)
         
-        let maxValidT = CGFloat.max //halfRadius
-        
-        if direction.y != 0
+        if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction, newDirection: CGPointMake(-direction.x, direction.y))
         {
-            let invVY = 1.0 / direction.y
-            
-            // try bottom horizontal edge
-            if (direction.y > 0)
+            if (collision == nil) || (collision!.t > c.t)
             {
-                let t = (myBox.origin.y - pos.y) * invVY
-                if (t >= 0) && (t <= maxValidT)
-                {
-                    if (collision == nil) || (t < collision!.t)
-                    {
-                        let x = (t * direction.x) + pos.x
-                        if (x >= myBox.origin.x - overhead) && (x <= myBox.origin.x + myBox.size.width + overhead)
-                        {
-                            let newDirection = CGPointMake(direction.x, -direction.y)
-                            let y = (t * direction.y) + pos.y
-                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.bottom)
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // try top horizontal edge
-                let t = ((myBox.origin.y + myBox.size.height) - pos.y) * invVY
-                if (t >= 0) && (t <= maxValidT)
-                {
-                    if (collision == nil) || (t < collision!.t)
-                    {
-                        let x = (t * direction.x) + pos.x
-                        if (x >= myBox.origin.x - overhead) && (x <= myBox.origin.x + myBox.size.width + overhead)
-                        {
-                            let newDirection = CGPointMake(direction.x, -direction.y)
-                            let y = (t * direction.y) + pos.y
-                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.top)
-                        }
-                    }
-                }
+                collision = c
             }
         }
-        
-        if direction.x != 0
+
+        if let c = collisionWithEdge(Collision.Edge.right, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: D, vertex2:C, direction:direction,newDirection: CGPointMake(-direction.x, direction.y))
         {
-            let invVX = 1.0 / direction.x
-            
-            if direction.x > 0
+            if (collision == nil) || (collision!.t > c.t)
             {
-                // try left vertical edge
-                let t = (myBox.origin.x - pos.x) * invVX
-                if (t >= 0) && (t <= maxValidT)
-                {
-                    if (collision == nil) || (t < collision!.t)
-                    {
-                        let y = (t * direction.y) + pos.y
-                        if (y >= myBox.origin.y - overhead) && (y <= myBox.origin.y + myBox.size.height + overhead)
-                        {
-                            let newDirection = CGPointMake(-direction.x, direction.y)
-                            let x = (t * direction.x) + pos.x
-                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.left)
-                        }
-                    }
-                }
+                collision = c
             }
-            else
+        }
+
+        if let c = collisionWithEdge(Collision.Edge.bottom, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:D, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
+        {
+            if (collision == nil) || (collision!.t > c.t)
             {
-                // try right vertical edge
-                let t = ((myBox.origin.x + myBox.size.width) - pos.x) * invVX
-                if (t >= 0) && (t <= maxValidT)
-                {
-                    if (collision == nil) || (t < collision!.t)
-                    {
-                        let y = (t * direction.y) + pos.y
-                        if (y >= myBox.origin.y - overhead) && (y <= myBox.origin.y + myBox.size.height + overhead)
-                        {
-                            let newDirection = CGPointMake(-direction.x, direction.y)
-                            let x = (t * direction.x) + pos.x
-                            collision = Collision(node:myNode, hitPoint:CGPointMake(x, y), direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:.right)
-                        }
-                    }
-                }
+                collision = c
+            }
+        }
+
+        if let c = collisionWithEdge(Collision.Edge.top, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: B, vertex2:C, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
+        {
+            if (collision == nil) || (collision!.t > c.t)
+            {
+                collision = c
             }
         }
         
@@ -183,5 +129,48 @@ public class Collider : W2DComponent
         
         return collision
     }
-    
+
+    private func collisionWithEdge(edge: Collision.Edge, myNode:W2DNode, otherNodePosition:CGPoint, otherNodeRadius:CGFloat, vertex1:CGPoint, vertex2:CGPoint, direction:CGPoint, newDirection:CGPoint) ->Collision?
+    {
+        let AO = otherNodePosition.sub(vertex1)
+        let edgeNormal = edge.normal
+        if AO.dot(edgeNormal) <= 0
+        {
+            return nil
+        }
+        
+        if direction.dot(edgeNormal) >= 0
+        {
+            return nil
+        }
+        
+        let AB = vertex2.sub(vertex1)
+        
+        let edgeLength = AB.norm()
+        let normalizedEdge = CGPointMake(AB.x / edgeLength, AB.y / edgeLength)
+        
+        let AH = AO.dot(normalizedEdge)
+        if AH < -otherNodeRadius
+        {
+            return nil
+        }
+        
+        if AH > edgeLength
+        {
+            return nil
+        }
+        
+        // perpendicular distance
+        let squareOHLength = AO.squareNorm() - (AH * AH)
+        if squareOHLength > (otherNodeRadius * otherNodeRadius)
+        {
+            // too far
+            return nil
+        }
+        
+        let hitPoint = CGPointMake(vertex1.x + (normalizedEdge.x * AH), vertex1.y + (normalizedEdge.y * AH))
+        let t = sqrt(squareOHLength)
+        
+        return Collision(node:myNode, hitPoint:hitPoint, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:edge)
+    }
 }
