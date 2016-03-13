@@ -104,6 +104,9 @@ public class PongLevel : W2DComponent, W2DBehavior
             let brick = createBrick(scene, image:brickImage!, id:id++, health:3)
             brick.position = pt
             
+            let brickComponent : Brick = brick.component()!
+            //brickComponent.otherScaleAfterCollision = 1.5
+            
             pt.y += brickSize.height * 1.05
         }
         

@@ -9,11 +9,13 @@
 import Foundation
 import WatchScene2D
 
-class Brick : W2DComponent
+public class Brick : W2DComponent
 {
     var fMaxHealth : Int
     var fHealth : Int
     var fCollisionAction : W2DAction? = nil
+    
+    public var otherScaleAfterCollision : CGFloat = 1.0
     
     init(maxHealth:Int)
     {
@@ -21,7 +23,7 @@ class Brick : W2DComponent
         fHealth = maxHealth
     }
     
-    override func onComponentAdded(newHead:W2DComponent)
+    override public func onComponentAdded(newHead:W2DComponent)
     {
         super.onComponentAdded(newHead)
         
@@ -43,7 +45,7 @@ class Brick : W2DComponent
         }
     }
     
-    override  func onComponentRemoved(oldHead:W2DComponent, oldComponent:W2DComponent)
+    override  public func onComponentRemoved(oldHead:W2DComponent, oldComponent:W2DComponent)
     {
         let colliderOrNil : Collider? = oldHead.component()
         if let collider = colliderOrNil
@@ -57,6 +59,15 @@ class Brick : W2DComponent
     func handleCollision(collision:Collision) -> Collision
     {
         assert(fHealth > 0)
+        
+        if otherScaleAfterCollision != 1.0
+        {
+            if fHealth == fMaxHealth // First Hit
+            {
+                collision.otherNode?.scale = otherScaleAfterCollision
+            }
+        }
+        
         let myNode = collision.node
         
         if --fHealth == 0

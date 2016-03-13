@@ -87,7 +87,7 @@ public class Collider : W2DComponent
         let C = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y + myBox.size.height)
         let D = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y)
         
-        if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction, newDirection: CGPointMake(-direction.x, direction.y))
+        if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction, newDirection: CGPointMake(-direction.x, direction.y))
         {
             if (collision == nil) || (collision!.t > c.t)
             {
@@ -95,7 +95,7 @@ public class Collider : W2DComponent
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.right, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: D, vertex2:C, direction:direction,newDirection: CGPointMake(-direction.x, direction.y))
+        if let c = collisionWithEdge(Collision.Edge.right, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: D, vertex2:C, direction:direction,newDirection: CGPointMake(-direction.x, direction.y))
         {
             if (collision == nil) || (collision!.t > c.t)
             {
@@ -103,7 +103,7 @@ public class Collider : W2DComponent
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.bottom, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:D, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
+        if let c = collisionWithEdge(Collision.Edge.bottom, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:D, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
         {
             if (collision == nil) || (collision!.t > c.t)
             {
@@ -111,7 +111,7 @@ public class Collider : W2DComponent
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.top, myNode: myNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: B, vertex2:C, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
+        if let c = collisionWithEdge(Collision.Edge.top, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: B, vertex2:C, direction:direction,newDirection: CGPointMake(direction.x, -direction.y))
         {
             if (collision == nil) || (collision!.t > c.t)
             {
@@ -130,7 +130,7 @@ public class Collider : W2DComponent
         return collision
     }
 
-    private func collisionWithEdge(edge: Collision.Edge, myNode:W2DNode, otherNodePosition:CGPoint, otherNodeRadius:CGFloat, vertex1:CGPoint, vertex2:CGPoint, direction:CGPoint, newDirection:CGPoint) ->Collision?
+    private func collisionWithEdge(edge: Collision.Edge, myNode:W2DNode, otherNode:W2DNode, otherNodePosition:CGPoint, otherNodeRadius:CGFloat, vertex1:CGPoint, vertex2:CGPoint, direction:CGPoint, newDirection:CGPoint) ->Collision?
     {
         let AO = otherNodePosition.sub(vertex1)
         let edgeNormal = edge.normal
@@ -171,6 +171,6 @@ public class Collider : W2DComponent
         let hitPoint = CGPointMake(vertex1.x + (normalizedEdge.x * AH), vertex1.y + (normalizedEdge.y * AH))
         let t = sqrt(squareOHLength)
         
-        return Collision(node:myNode, hitPoint:hitPoint, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:edge)
+        return Collision(node:myNode, otherNode:otherNode, hitPoint:hitPoint, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:edge)
     }
 }
