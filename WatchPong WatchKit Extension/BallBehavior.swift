@@ -66,7 +66,7 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             // move back the ball
             let edgeNormal = closestCollision!.edge.normal
-            let stepBack = edgeNormal.mul(closestCollision!.t /* * 1.1 */)
+            let stepBack = edgeNormal.mul(closestCollision!.t)
             let newPos = closestCollision!.hitPoint.add(stepBack)
             
             ballSprite.position = newPos

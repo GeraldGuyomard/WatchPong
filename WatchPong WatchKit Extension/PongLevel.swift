@@ -105,7 +105,7 @@ public class PongLevel : W2DComponent, W2DBehavior
             brick.position = pt
             
             let brickComponent : Brick = brick.component()!
-            //brickComponent.otherScaleAfterCollision = 1.5
+            brickComponent.otherScaleAfterCollision = 0.5
             
             pt.y += brickSize.height * 1.05
         }
@@ -136,6 +136,8 @@ public class PongLevel : W2DComponent, W2DBehavior
         let sprite = W2DSprite(named: "ball.png", inDirector:director)
         sprite.debugName = "ball"
         sprite.anchorPoint = CGPointMake(0.5, 0.5)
+        //sprite.scale = 0.5
+        
         scene.addChild(sprite)
         
         let ballBeh = BallBehavior()
@@ -227,7 +229,8 @@ public class PongLevel : W2DComponent, W2DBehavior
         for ball in fBalls
         {
             let ballSize = ball.size
-            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width), (contextHeight - ballSize.height) / 2)
+            let s = ball.scale
+            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width * s), (contextHeight - (ballSize.height * s)) / 2)
             ball.position = ballPos
         }
 
