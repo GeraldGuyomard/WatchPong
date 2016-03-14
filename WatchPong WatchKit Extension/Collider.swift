@@ -77,7 +77,7 @@ public class Collider : W2DComponent
         }
         
         // ray box intersection is happening now
-        let radius = otherBox.size.width / 2.0
+        var radius = otherBox.size.width / 2.0
         let pos = CGPointMake(otherBox.origin.x + radius, otherBox.origin.y + radius)
         
         var collision : Collision? = nil
@@ -86,6 +86,11 @@ public class Collider : W2DComponent
         let B = CGPointMake(myBox.origin.x, myBox.origin.y + myBox.size.height)
         let C = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y + myBox.size.height)
         let D = CGPointMake(myBox.origin.x + myBox.size.width, myBox.origin.y)
+        
+        if instantaneousSpeed > radius
+        {
+            radius = instantaneousSpeed
+        }
         
         if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction)
         {
