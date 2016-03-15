@@ -49,29 +49,29 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         
         // try to collide with any collider in the scene
-        let collisions = Collider.collideInScene(director.currentScene!, ball: sprite, direction:fBallDirection, instantaneousSpeed:dV)
+        let collisions = Collider.collideInScene(director.currentScene!, movingNode:sprite, direction:fBallDirection, instantaneousSpeed:dV)
         if !collisions.isEmpty
         {
             var closestCollision : Collision?
-            var minT = CGFloat.max
+            var minDist = CGFloat.max
             
             for c in collisions
             {
-                if (c.t < minT)
+                if (c.distanceToEdge < minDist)
                 {
-                    minT = c.t
+                    minDist = c.distanceToEdge
                     closestCollision = c
                 }
             }
             
             // move back the ball
-            let edgeNormal = closestCollision!.edge.normal
-            let stepBack = edgeNormal.mul(closestCollision!.t)
+            let edgeNormal = closestCollision!.edgeNormal
+            let stepBack = edgeNormal.mul(closestCollision!.distanceToEdge)
             let newPos = closestCollision!.hitPoint.add(stepBack)
             
             ballSprite.position = newPos
             
-            fBallDirection = closestCollision!.direction
+            fBallDirection = closestCollision!.bounceDirection
             fBallSpeed *= closestCollision!.bounceSpeedFactor
             
             let maxBallSpeed :CGFloat = 120

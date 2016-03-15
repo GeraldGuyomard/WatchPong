@@ -14,21 +14,21 @@ public class Collider : W2DComponent
 {
     public var isActive = true
     
-    static public func collideInScene(scene:W2DScene!, ball:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> [Collision]
+    static public func collideInScene(scene:W2DScene!, movingNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> [Collision]
     {
         var collisions = [Collision]()
-        _collideRecursive(scene, considerThisNode: false, ball:ball, direction:direction, instantaneousSpeed:instantaneousSpeed, collisions:&collisions)
+        _collideRecursive(scene, considerThisNode: false, movingNode:movingNode, direction:direction, instantaneousSpeed:instantaneousSpeed, collisions:&collisions)
         return collisions
     }
     
-    static private func _collideRecursive(node:W2DNode!, considerThisNode:Bool, ball:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat, inout collisions:[Collision])
+    static private func _collideRecursive(node:W2DNode!, considerThisNode:Bool, movingNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat, inout collisions:[Collision])
     {
         if considerThisNode
         {
             let collider : Collider? = node.component()
             if let c = collider
             {
-                if let collision = c.collide(ball, direction: direction, instantaneousSpeed:instantaneousSpeed)
+                if let collision = c.collide(movingNode, direction: direction, instantaneousSpeed:instantaneousSpeed)
                 {
                     collisions.append(collision)
                 }
@@ -39,7 +39,7 @@ public class Collider : W2DComponent
         {
             for child in children
             {
-                _collideRecursive(child, considerThisNode: true, ball: ball, direction: direction, instantaneousSpeed: instantaneousSpeed, collisions:&collisions)
+                _collideRecursive(child, considerThisNode: true, movingNode:movingNode, direction: direction, instantaneousSpeed: instantaneousSpeed, collisions:&collisions)
             }
         }
     }
@@ -48,7 +48,7 @@ public class Collider : W2DComponent
     
     public var collisionCallback : ((collision:Collision) -> Collision?)?
 
-    public func collide(otherNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> Collision?
+    public func collide(movingNode:W2DNode!, direction:CGPoint, instantaneousSpeed:CGFloat) -> Collision?
     {
         if !self.isActive
         {
@@ -64,7 +64,7 @@ public class Collider : W2DComponent
         
         // first easy rejections with AABBs
         let myBox = myNode.globalBoundingBox
-        let otherBox = otherNode.globalBoundingBox
+        let otherBox = movingNode.globalBoundingBox
         
         var otherMovedBox = otherBox
         otherMovedBox.origin = otherMovedBox.origin.add(direction.mul(instantaneousSpeed))
@@ -92,33 +92,33 @@ public class Collider : W2DComponent
             radius = instantaneousSpeed
         }
         
-        if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction)
+        if let c = collisionWithEdge(Collision.Edge.left, myNode: myNode, movingNode: movingNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: A, vertex2:B, direction:direction)
         {
-            if (collision == nil) || (collision!.t > c.t)
+            if c.closerThan(collision)
             {
                 collision = c
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.right, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: C, vertex2:D, direction:direction)
+        if let c = collisionWithEdge(Collision.Edge.right, myNode: myNode, movingNode: movingNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: C, vertex2:D, direction:direction)
         {
-            if (collision == nil) || (collision!.t > c.t)
+            if c.closerThan(collision)
             {
                 collision = c
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.bottom, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: D, vertex2:A, direction:direction)
+        if let c = collisionWithEdge(Collision.Edge.bottom, myNode: myNode, movingNode: movingNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: D, vertex2:A, direction:direction)
         {
-            if (collision == nil) || (collision!.t > c.t)
+            if c.closerThan(collision)
             {
                 collision = c
             }
         }
 
-        if let c = collisionWithEdge(Collision.Edge.top, myNode: myNode, otherNode:otherNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: B, vertex2:C, direction:direction)
+        if let c = collisionWithEdge(Collision.Edge.top, myNode: myNode, movingNode: movingNode, otherNodePosition: pos, otherNodeRadius: radius, vertex1: B, vertex2:C, direction:direction)
         {
-            if (collision == nil) || (collision!.t > c.t)
+            if c.closerThan(collision)
             {
                 collision = c
             }
@@ -135,11 +135,11 @@ public class Collider : W2DComponent
         return collision
     }
 
-    private func collisionWithEdge(edge: Collision.Edge, myNode:W2DNode, otherNode:W2DNode, otherNodePosition:CGPoint, otherNodeRadius:CGFloat, vertex1:CGPoint, vertex2:CGPoint, direction:CGPoint) ->Collision?
+    private func collisionWithEdge(edge: Collision.Edge, myNode:W2DNode, movingNode:W2DNode, otherNodePosition:CGPoint, otherNodeRadius:CGFloat, vertex1:CGPoint, vertex2:CGPoint, direction:CGPoint) ->Collision?
     {
         let AB = vertex2.sub(vertex1)
         let AO = otherNodePosition.sub(vertex1)
-        let edgeNormal = CGPointMake(-AB.y, AB.x)
+        var edgeNormal = CGPointMake(-AB.y, AB.x)
         
         if AO.dot(edgeNormal) <= 0
         {
@@ -153,7 +153,7 @@ public class Collider : W2DComponent
         
         let edgeLength = AB.norm()
         let invLength = 1.0 / edgeLength
-        let v = CGPointMake(AB.x * invLength, AB.y * invLength)
+        let v = AB.mul(invLength)
         
         let AH = AO.dot(v)
         if AH < -otherNodeRadius
@@ -185,9 +185,21 @@ public class Collider : W2DComponent
         
         let newDirection = CGPointMake(-symX, -symY)
         
-        let hitPoint = CGPointMake(vertex1.x + (v.x * AH), vertex1.y + (v.y * AH))
-        let t = sqrt(squareOHLength)
+        let hitPoint = vertex1.add(v.mul(AH))
+        let distanceToEdge = sqrt(squareOHLength)
         
-        return Collision(node:myNode, otherNode:otherNode, hitPoint:hitPoint, direction:newDirection, bounceSpeedFactor:bounceSpeedFactor, t:t, edge:edge)
+        edgeNormal = edgeNormal.mul(invLength)
+        
+        return Collision(   hitNode:myNode,
+                            hitPoint:hitPoint,
+            
+                            movingNode:movingNode,
+            
+                            bounceDirection:newDirection,
+                            bounceSpeedFactor:bounceSpeedFactor,
+            
+                            edge:edge,
+                            distanceToEdge:distanceToEdge,
+                            edgeNormal:edgeNormal)
     }
 }

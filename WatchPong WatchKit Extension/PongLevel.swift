@@ -167,7 +167,7 @@ public class PongLevel : W2DComponent, W2DBehavior
                 {
                     // deviate the direction depending on distance to middle
                     let hitY = collision.hitPoint.y
-                    let myBox = collision.node.globalBoundingBox
+                    let myBox = collision.hitNode.globalBoundingBox
                     //assert(hitY >= myBox.origin.y)
                     //assert(hitY <= myBox.origin.y + myBox.size.height)
                     
@@ -183,9 +183,9 @@ public class PongLevel : W2DComponent, W2DBehavior
                     let deviationAngle = deviationAngleInDegree * CGFloat(M_PI) / 180.0
                     
                     let rotation = CGAffineTransformMakeRotation(deviationAngle)
-                    let deviatedDirection = CGPointApplyAffineTransform(collision.direction, rotation)
+                    let deviatedDirection = CGPointApplyAffineTransform(collision.bounceDirection, rotation)
                                         
-                    collision.direction = deviatedDirection.normalizedVector()
+                    collision.bounceDirection = deviatedDirection.normalizedVector()
                 }
                 
                 return collision

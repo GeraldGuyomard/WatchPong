@@ -11,12 +11,13 @@ import WatchScene2D
 
 public struct Collision
 {
-    public var node : W2DNode!
-    public var otherNode: W2DNode!
+    public var hitNode : W2DNode!
     public var hitPoint : CGPoint
-    public var direction : CGPoint
+    
+    public var movingNode: W2DNode!
+    
+    public var bounceDirection : CGPoint
     public var bounceSpeedFactor: CGFloat
-    public var t : CGFloat
     
     public enum Edge
     {
@@ -24,21 +25,21 @@ public struct Collision
         case top
         case right
         case bottom
-        
-        var normal : CGPoint
-        {
-            get
-            {
-                switch self
-                {
-                    case .left : return CGPointMake(-1, 0)
-                    case .right : return CGPointMake(1, 0)
-                    case .top : return CGPointMake(0, 1)
-                    case .bottom : return CGPointMake(0, -1)
-                }
-            }
-        }
     }
     
     public var edge : Edge
+    public var distanceToEdge : CGFloat
+    public var edgeNormal: CGPoint
+    
+    public func closerThan(collision:Collision?) -> Bool
+    {
+        if let c = collision
+        {
+            return distanceToEdge < c.distanceToEdge
+        }
+        else
+        {
+            return true
+        }
+    }
 }

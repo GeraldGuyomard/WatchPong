@@ -64,12 +64,12 @@ public class Brick : W2DComponent
         {
             if fHealth == fMaxHealth // First Hit
             {
-                collision.otherNode!.run(W2DScaleToAction(duration: 1, finalScale: 0.5))
+                collision.movingNode!.run(W2DScaleToAction(duration: 1, finalScale: 0.5))
                 //collision.otherNode?.scale = otherScaleAfterCollision
             }
         }
         
-        let myNode = collision.node
+        let myNode = collision.hitNode
         
         if --fHealth == 0
         {
