@@ -49,10 +49,10 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         
         // try to collide with any collider in the scene
-        let collisions = Collider.collideInScene(director.currentScene!, movingNode:sprite, direction:fBallDirection, instantaneousSpeed:dV)
+        let collisions = W2DCollider.collideInScene(director.currentScene!, movingNode:sprite, direction:fBallDirection, instantaneousSpeed:dV)
         if !collisions.isEmpty
         {
-            var closestCollision : Collision?
+            var closestCollision : W2DCollision?
             var minDist = CGFloat.max
             
             for c in collisions

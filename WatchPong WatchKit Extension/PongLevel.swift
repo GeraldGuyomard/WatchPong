@@ -51,7 +51,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         brick.debugName = "brick \(id)"
         
-        let collider = Collider()
+        let collider = W2DCollider()
         brick.addComponent(collider)
         brick.addComponent(Brick(maxHealth: health))
         
@@ -69,21 +69,21 @@ public class PongLevel : W2DComponent, W2DBehavior
         let topBorder = W2DColoredNode(color: color, director: director)
         topBorder.size = CGSizeMake(screenSize.width, 4.0);
         topBorder.position = CGPointMake(0, 0)
-        topBorder.addComponent(Collider())
+        topBorder.addComponent(W2DCollider())
         topBorder.debugName = "topBorder"
         scene.addChild(topBorder)
         
         let bottomBorder = W2DColoredNode(color: color, director: director)
         bottomBorder.size = CGSizeMake(screenSize.width, 4.0);
         bottomBorder.position = CGPointMake(0, screenSize.height - bottomBorder.size.height)
-        bottomBorder.addComponent(Collider())
+        bottomBorder.addComponent(W2DCollider())
         topBorder.debugName = "bottomBorder"
         scene.addChild(bottomBorder)
         
         let leftBorder = W2DColoredNode(color: color, director: director)
         leftBorder.size = CGSizeMake(4, screenSize.height);
         leftBorder.position = CGPointMake(0, 0)
-        leftBorder.addComponent(Collider())
+        leftBorder.addComponent(W2DCollider())
         topBorder.debugName = "leftBorder"
         scene.addChild(leftBorder)
     }
@@ -156,27 +156,21 @@ public class PongLevel : W2DComponent, W2DBehavior
         scene.addChild(sprite)
         
         sprite.position = CGPointMake(CGFloat(director.context.width) - sprite.size.width, 0)
-        let padBeh = Collider()
+        let padBeh = W2DCollider()
         padBeh.bounceSpeedFactor = 1.3
         padBeh.collisionCallback = {
-            (var collision:Collision) -> Collision? in
+            (var collision:W2DCollision) -> W2DCollision? in
             {
                 WKInterfaceDevice.currentDevice().playHaptic(.Retry)
                 
-                if (collision.edge == .left)
+                if collision.edgeIndex == 0 // left edge
                 {
                     // deviate the direction depending on distance to middle
                     let hitY = collision.hitPoint.y
                     let myBox = collision.hitNode.globalBoundingBox
-                    //assert(hitY >= myBox.origin.y)
-                    //assert(hitY <= myBox.origin.y + myBox.size.height)
                     
                     let middleY = myBox.origin.y + myBox.size.height / 2
                     var normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
-                    //normalizedDist *= normalizedDist
-                    
-                    //assert(normalizedDist <= 1.0)
-                    //assert(normalizedDist >= -1.0)
                     
                     let deviationRange: CGFloat = 20.0
                     let deviationAngleInDegree = (-normalizedDist * deviationRange)

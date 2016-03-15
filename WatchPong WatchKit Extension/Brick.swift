@@ -27,11 +27,11 @@ public class Brick : W2DComponent
     {
         super.onComponentAdded(newHead)
         
-        let colliderOrNil : Collider? = component()
+        let colliderOrNil : W2DCollider? = component()
         if let collider = colliderOrNil
         {
             collider.collisionCallback = {
-                [weak self](collision:Collision) -> Collision? in
+                [weak self](collision:W2DCollision) -> W2DCollision? in
                 {
                     if let myself = self
                     {
@@ -47,7 +47,7 @@ public class Brick : W2DComponent
     
     override  public func onComponentRemoved(oldHead:W2DComponent, oldComponent:W2DComponent)
     {
-        let colliderOrNil : Collider? = oldHead.component()
+        let colliderOrNil : W2DCollider? = oldHead.component()
         if let collider = colliderOrNil
         {
             collider.collisionCallback = nil
@@ -56,7 +56,7 @@ public class Brick : W2DComponent
         super.onComponentRemoved(oldHead, oldComponent:oldComponent)
     }
     
-    func handleCollision(collision:Collision) -> Collision
+    func handleCollision(collision:W2DCollision) -> W2DCollision
     {
         assert(fHealth > 0)
         
@@ -65,7 +65,6 @@ public class Brick : W2DComponent
             if fHealth == fMaxHealth // First Hit
             {
                 collision.movingNode!.run(W2DScaleToAction(duration: 1, finalScale: 0.5))
-                //collision.otherNode?.scale = otherScaleAfterCollision
             }
         }
         
@@ -73,7 +72,7 @@ public class Brick : W2DComponent
         
         if --fHealth == 0
         {
-            let collider : Collider? = component()
+            let collider : W2DCollider? = component()
             collider?.isActive = false
         }
         
