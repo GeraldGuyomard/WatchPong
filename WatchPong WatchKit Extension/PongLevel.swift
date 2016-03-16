@@ -111,10 +111,15 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
         
         pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
+        var rot : CGFloat = 10 * (CGFloat(M_PI) / 180.0)
+        
         for _ in 1...4
         {
             let brick = createBrick(scene, image:brickImage!, id:id++, health:2)
             brick.position = pt
+            brick.scale = 0.7
+            brick.rotation = rot
+            rot = -rot
             
             pt.y += brickSize.height * 1.1
         }
