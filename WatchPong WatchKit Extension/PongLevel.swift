@@ -30,13 +30,12 @@ public class PongLevel : W2DComponent, W2DBehavior
     {
         // make sure all balls are still in game
         let context = director.context
-        let contextWidth = CGFloat(context.width);
+        let screenBounds = CGRectMake(0, 0, CGFloat(context.width), CGFloat(context.height))
         
         for ball in fBalls
         {            
             let ballBox = ball.globalBoundingBox
-            let ballPos = ballBox.origin.x + ballBox.size.width
-            if ballPos >= contextWidth // going to far on the right
+            if !CGRectContainsRect(screenBounds, ballBox)
             {
                 onLost(director)
                 break
