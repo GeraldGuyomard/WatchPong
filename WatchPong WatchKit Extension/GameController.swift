@@ -32,7 +32,7 @@ class GameController: WKInterfaceController
         f2DDirector!.smartRedrawEnabled  = true
         //f2DDirector!.showDirtyRects = true
         
-        f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:40)
+        f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:30)
         
         f2DDirector!.currentScene = fLevel.createScene(f2DDirector!)
     }
