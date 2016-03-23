@@ -25,8 +25,8 @@ class GameController: WKInterfaceController
         let bounds = WKInterfaceDevice.currentDevice().screenBounds
         print("screen bounds (\(bounds.width) x \(bounds.height)")
         
-        let contextWidth = UInt(bounds.width) //(bounds.width == 156) ? UInt(142) : UInt(118)
-        let contextHeight = UInt(146)
+        let contextWidth = UInt(bounds.width)
+        let contextHeight = (bounds.width == 156) ? UInt(110) : UInt(110) // UInt(146 - 20)
         let context = createW2DContext(width:contextWidth, height:contextHeight)
         f2DDirector = createW2DDirector(self.image!, context: context)
         f2DDirector!.smartRedrawEnabled  = true

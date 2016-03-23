@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LX1-rT-aub">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LX1-rT-aub">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="9515"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="10032"/>
     </dependencies>
     <scenes>
         <!--Main Menu Controller-->
@@ -26,16 +26,40 @@
             <objects>
                 <controller id="AgC-eL-Hgc" userLabel="Game Controller" customClass="GameController" customModule="WatchPong_WatchKit_Extension">
                     <items>
-                        <group width="1" height="146" alignment="left" backgroundImage="bg" id="9sY-JB-oRg">
+                        <group width="1" height="1" alignment="left" layout="vertical" id="9sY-JB-oRg" userLabel="root">
                             <items>
-                                <imageView width="1" height="1" alignment="left" contentMode="center" id="gMM-Cd-40M"/>
+                                <group width="1" alignment="left" id="eti-DQ-dFa" userLabel="top group">
+                                    <items>
+                                        <label height="10" alignment="left" verticalAlignment="center" text="1500" id="EAq-1e-9QI"/>
+                                        <group width="60" alignment="right" verticalAlignment="center" id="TeZ-EK-3Wt" userLabel="health">
+                                            <items>
+                                                <imageView alignment="left" image="heart" id="Unu-7E-HuB"/>
+                                                <imageView alignment="left" image="heart" id="KhX-it-t8Z"/>
+                                                <imageView alignment="left" image="heart" id="flD-L1-cE0"/>
+                                            </items>
+                                        </group>
+                                    </items>
+                                </group>
+                                <group width="1" height="110" alignment="left" backgroundImage="bg" id="DBp-xj-dwm" userLabel="Image Container">
+                                    <items>
+                                        <imageView width="1" height="1" alignment="left" contentMode="center" id="gMM-Cd-40M"/>
+                                    </items>
+                                </group>
+                                <group width="1" alignment="left" id="9qh-RF-NCe" userLabel="bottom group">
+                                    <items>
+                                        <button alignment="left" id="5Wr-aP-MY5">
+                                            <group key="contentGroup" width="20" height="20" alignment="left" backgroundImage="ball" id="iX3-ce-ums"/>
+                                        </button>
+                                        <button width="0.5" height="20" alignment="left" title="Button" id="oTG-fP-XfL"/>
+                                        <picker width="10" height="2" alignment="right" alpha="0.050000000000000003" style="sequence" id="k0B-HL-52d">
+                                            <connections>
+                                                <action selector="pickerAction:" destination="AgC-eL-Hgc" id="be1-Ou-Di2"/>
+                                            </connections>
+                                        </picker>
+                                    </items>
+                                </group>
                             </items>
                         </group>
-                        <picker width="10" height="2" alignment="right" alpha="0.050000000000000003" style="sequence" id="zqv-VH-yDk">
-                            <connections>
-                                <action selector="pickerAction:" destination="AgC-eL-Hgc" id="Tky-jx-07v"/>
-                            </connections>
-                        </picker>
                     </items>
                     <menu key="menu" id="2Hc-tv-2X1">
                         <items>
@@ -48,7 +72,7 @@
                     </menu>
                     <connections>
                         <outlet property="image" destination="gMM-Cd-40M" id="Qz4-vX-dTM"/>
-                        <outlet property="myPicker" destination="zqv-VH-yDk" id="WNO-28-v81"/>
+                        <outlet property="myPicker" destination="k0B-HL-52d" id="EVR-hG-H9F"/>
                     </connections>
                 </controller>
             </objects>
