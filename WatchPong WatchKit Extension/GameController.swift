@@ -12,7 +12,7 @@ import WatchScene2D
 
 class GameController: WKInterfaceController
 {
-    @IBOutlet var image : WKInterfaceImage?
+    @IBOutlet var screenButton : WKInterfaceButton?
     @IBOutlet var myPicker: WKInterfacePicker?
     
     @IBOutlet var health1 : WKInterfaceObject?
@@ -72,7 +72,7 @@ class GameController: WKInterfaceController
         let contextWidth = UInt(bounds.width)
         let contextHeight = (bounds.width == 156) ? UInt(148) : UInt(120) // UInt(146 - 20)
         let context = createW2DContext(width:contextWidth, height:contextHeight)
-        f2DDirector = createW2DDirector(self.image!, context: context)
+        f2DDirector = createW2DDirector(self.screenButton!, context: context)
         f2DDirector!.smartRedrawEnabled  = true
         //f2DDirector!.showDirtyRects = true
         
@@ -114,5 +114,10 @@ class GameController: WKInterfaceController
                     this.fLevel.setPadPosition(value, director:this.f2DDirector)
                 }
             })
+    }
+    
+    @IBAction func clickScreenAction()
+    {
+        
     }
 }

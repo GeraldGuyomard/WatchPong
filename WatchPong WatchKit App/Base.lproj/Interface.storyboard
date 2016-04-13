@@ -47,7 +47,11 @@
                                 </group>
                                 <group width="1" height="120" alignment="left" backgroundImage="bg" id="DBp-xj-dwm" userLabel="Image Container">
                                     <items>
-                                        <imageView width="1" height="1" alignment="left" contentMode="center" id="gMM-Cd-40M"/>
+                                        <button width="1" height="1" alignment="left" id="YJh-ry-r8N" userLabel="Screen Button">
+                                            <connections>
+                                                <action selector="clickScreenAction" destination="AgC-eL-Hgc" id="mjR-u2-JEx"/>
+                                            </connections>
+                                        </button>
                                     </items>
                                     <variation key="device=watch38mm" height="120"/>
                                     <variation key="device=watch42mm" height="148"/>
@@ -68,8 +72,8 @@
                         <outlet property="health1" destination="flD-L1-cE0" id="6rR-ju-66i"/>
                         <outlet property="health2" destination="KhX-it-t8Z" id="Q8D-zp-opC"/>
                         <outlet property="health3" destination="Unu-7E-HuB" id="CLo-UL-QuF"/>
-                        <outlet property="image" destination="gMM-Cd-40M" id="Qz4-vX-dTM"/>
                         <outlet property="myPicker" destination="k0B-HL-52d" id="EVR-hG-H9F"/>
+                        <outlet property="screenButton" destination="YJh-ry-r8N" id="CoZ-Vh-2Q8"/>
                     </connections>
                 </controller>
             </objects>
