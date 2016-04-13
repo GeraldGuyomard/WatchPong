@@ -28,35 +28,29 @@
                     <items>
                         <group width="1" height="1" alignment="left" layout="vertical" id="9sY-JB-oRg" userLabel="root">
                             <items>
-                                <group width="1" alignment="left" id="eti-DQ-dFa" userLabel="top group">
+                                <group width="1" height="16" alignment="left" id="eti-DQ-dFa" userLabel="top group">
                                     <items>
-                                        <label height="10" alignment="left" verticalAlignment="center" text="1500" id="EAq-1e-9QI"/>
+                                        <label alignment="left" verticalAlignment="center" text="1500" id="EAq-1e-9QI"/>
                                         <group width="60" alignment="right" verticalAlignment="center" id="TeZ-EK-3Wt" userLabel="health">
                                             <items>
                                                 <imageView alignment="left" image="heart" id="Unu-7E-HuB"/>
                                                 <imageView alignment="left" image="heart" id="KhX-it-t8Z"/>
                                                 <imageView alignment="left" image="heart" id="flD-L1-cE0"/>
+                                                <picker width="10" height="2" alignment="right" alpha="0.050000000000000003" style="sequence" id="k0B-HL-52d">
+                                                    <connections>
+                                                        <action selector="pickerAction:" destination="AgC-eL-Hgc" id="be1-Ou-Di2"/>
+                                                    </connections>
+                                                </picker>
                                             </items>
                                         </group>
                                     </items>
                                 </group>
-                                <group width="1" height="110" alignment="left" backgroundImage="bg" id="DBp-xj-dwm" userLabel="Image Container">
+                                <group width="1" height="120" alignment="left" backgroundImage="bg" id="DBp-xj-dwm" userLabel="Image Container">
                                     <items>
-                                        <imageView width="1" height="1" alignment="left" contentMode="left" id="gMM-Cd-40M"/>
+                                        <imageView width="1" height="1" alignment="left" contentMode="center" id="gMM-Cd-40M"/>
                                     </items>
-                                </group>
-                                <group width="1" alignment="left" id="9qh-RF-NCe" userLabel="bottom group">
-                                    <items>
-                                        <button alignment="left" id="5Wr-aP-MY5">
-                                            <group key="contentGroup" width="20" height="20" alignment="left" backgroundImage="ball" id="iX3-ce-ums"/>
-                                        </button>
-                                        <button width="0.5" height="20" alignment="left" title="Button" id="oTG-fP-XfL"/>
-                                        <picker width="10" height="2" alignment="right" alpha="0.050000000000000003" style="sequence" id="k0B-HL-52d">
-                                            <connections>
-                                                <action selector="pickerAction:" destination="AgC-eL-Hgc" id="be1-Ou-Di2"/>
-                                            </connections>
-                                        </picker>
-                                    </items>
+                                    <variation key="device=watch38mm" height="120"/>
+                                    <variation key="device=watch42mm" height="148"/>
                                 </group>
                             </items>
                         </group>

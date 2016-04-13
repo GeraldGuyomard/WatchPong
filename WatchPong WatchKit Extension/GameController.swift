@@ -70,7 +70,7 @@ class GameController: WKInterfaceController
         self.playerHealth = fHealths.count
         
         let contextWidth = UInt(bounds.width)
-        let contextHeight = (bounds.width == 156) ? UInt(110) : UInt(110) // UInt(146 - 20)
+        let contextHeight = (bounds.width == 156) ? UInt(148) : UInt(120) // UInt(146 - 20)
         let context = createW2DContext(width:contextWidth, height:contextHeight)
         f2DDirector = createW2DDirector(self.image!, context: context)
         f2DDirector!.smartRedrawEnabled  = true
