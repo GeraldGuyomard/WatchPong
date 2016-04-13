@@ -15,8 +15,35 @@ class GameController: WKInterfaceController
     @IBOutlet var image : WKInterfaceImage?
     @IBOutlet var myPicker: WKInterfacePicker?
     
+    @IBOutlet var health1 : WKInterfaceObject?
+    @IBOutlet var health2 : WKInterfaceObject?
+    @IBOutlet var health3 : WKInterfaceObject?
+    
+    var     fHealths = [WKInterfaceObject]()
+    var     fPlayerHealth : Int = 0
+    
     var     f2DDirector: W2DDirector?
     var     fLevel = PongLevel()
+    
+    var playerHealth : Int
+    {
+        get { return fPlayerHealth }
+        set(newHealth)
+        {
+            if fPlayerHealth != newHealth
+            {
+                fPlayerHealth = newHealth
+                assert(fPlayerHealth <= fHealths.count)
+                
+                var h = fPlayerHealth
+                for indicator in fHealths
+                {
+                    indicator.setHidden(h <= 0)
+                    h -= 1
+                }
+            }
+        }
+    }
     
     override func awakeWithContext(context: AnyObject?)
     {
@@ -24,6 +51,23 @@ class GameController: WKInterfaceController
         
         let bounds = WKInterfaceDevice.currentDevice().screenBounds
         print("screen bounds (\(bounds.width) x \(bounds.height)")
+        
+        if let h = health1
+        {
+            fHealths.append(h)
+        }
+        
+        if let h = health2
+        {
+            fHealths.append(h)
+        }
+        
+        if let h = health3
+        {
+            fHealths.append(h)
+        }
+        
+        self.playerHealth = fHealths.count
         
         let contextWidth = UInt(bounds.width)
         let contextHeight = (bounds.width == 156) ? UInt(110) : UInt(110) // UInt(146 - 20)

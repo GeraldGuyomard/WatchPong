@@ -42,7 +42,7 @@
                                 </group>
                                 <group width="1" height="110" alignment="left" backgroundImage="bg" id="DBp-xj-dwm" userLabel="Image Container">
                                     <items>
-                                        <imageView width="1" height="1" alignment="left" contentMode="center" id="gMM-Cd-40M"/>
+                                        <imageView width="1" height="1" alignment="left" contentMode="left" id="gMM-Cd-40M"/>
                                     </items>
                                 </group>
                                 <group width="1" alignment="left" id="9qh-RF-NCe" userLabel="bottom group">
@@ -71,6 +71,9 @@
                         </items>
                     </menu>
                     <connections>
+                        <outlet property="health1" destination="flD-L1-cE0" id="6rR-ju-66i"/>
+                        <outlet property="health2" destination="KhX-it-t8Z" id="Q8D-zp-opC"/>
+                        <outlet property="health3" destination="Unu-7E-HuB" id="CLo-UL-QuF"/>
                         <outlet property="image" destination="gMM-Cd-40M" id="Qz4-vX-dTM"/>
                         <outlet property="myPicker" destination="k0B-HL-52d" id="EVR-hG-H9F"/>
                     </connections>
