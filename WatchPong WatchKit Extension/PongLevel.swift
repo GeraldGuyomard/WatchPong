@@ -100,7 +100,9 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         for _ in 1...6
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++, health:3)
+            let brick = createBrick(scene, image:brickImage!, id:id, health:3)
+            id += 1
+            
             brick.position = pt
             
             let brickComponent : Brick = brick.component()!
@@ -114,7 +116,9 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         for _ in 1...4
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++, health:2)
+            let brick = createBrick(scene, image:brickImage!, id:id, health:2)
+            id += 1
+
             brick.position = pt
             brick.scale = 0.7
             brick.rotation = rot
@@ -126,7 +130,9 @@ public class PongLevel : W2DComponent, W2DBehavior
         pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
         for _ in 1...2
         {
-            let brick = createBrick(scene, image:brickImage!, id:id++, health:1)
+            let brick = createBrick(scene, image:brickImage!, id:id, health:1)
+            id += 1
+
             brick.position = pt
             
             pt.y += brickSize.height * 2
@@ -174,7 +180,7 @@ public class PongLevel : W2DComponent, W2DBehavior
                     let myBox = collision.hitNode.globalBoundingBox
                     
                     let middleY = myBox.origin.y + myBox.size.height / 2
-                    var normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
+                    let normalizedDist = 2.0 * (hitY - middleY) / myBox.size.height
                     
                     let deviationRange: CGFloat = 20.0
                     let deviationAngleInDegree = (-normalizedDist * deviationRange)
