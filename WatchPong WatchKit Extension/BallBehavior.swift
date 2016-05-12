@@ -9,15 +9,25 @@
 import WatchKit
 import WatchScene2D
 
-class BallBehavior : W2DComponent, W2DBehavior
+class BallBehavior : W2DComponent, W2DBehavior, MovingObject
 {
-    var     fBallDirection : CGPoint = CGPointMake(0, 0)
-    var     fBallSpeed : CGFloat = 0;
+    var     fDirection : CGPoint = CGPointMake(0, 0)
+    var     fSpeed : CGFloat = 0;
     
-    override init()
+    var direction : CGPoint
     {
-        super.init()
-        
+        get { return fDirection }
+        set(newValue) { fDirection = newValue }
+    }
+    
+    var speed : CGFloat
+    {
+        get { return fSpeed }
+        set(newValue) { fSpeed = newValue }
+    }
+    
+    func resetToInitialState()
+    {
         // random angle between -45 and 45
         let rInt = rand()
         let r = Float(Double(rInt) / Double(RAND_MAX))
@@ -31,14 +41,29 @@ class BallBehavior : W2DComponent, W2DBehavior
         let y = CGFloat(-sinf(angle))
         
         // normalization is in theory already normalized...
-        fBallDirection = CGPoint(x:x, y:y).normalizedVector()
+        fDirection = CGPoint(x:x, y:y).normalizedVector()
+        fSpeed = 60.0
         
-        fBallSpeed = 60.0
+        // Position on screen
+        let myNodeOrNil : W2DNode? = self.component()
+        if let myNode = myNodeOrNil
+        {
+            let ballSize = myNode.size
+            let s = myNode.scale
+            
+            let context = myNode.director!.context
+            
+            let contextWidth = CGFloat(context.width)
+            let contextHeight = CGFloat(context.height)
+            
+            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width * s), (contextHeight - (ballSize.height * s)) / 2)
+            myNode.position = ballPos
+        }
     }
     
     func execute(dT:NSTimeInterval, director:W2DDirector!)
     {
-        let dV = fBallSpeed * CGFloat(dT)
+        let dV = fSpeed * CGFloat(dT)
         
         let sprite : W2DSprite? = component()
         
@@ -49,7 +74,7 @@ class BallBehavior : W2DComponent, W2DBehavior
         }
         
         // try to collide with any collider in the scene
-        let collisions = W2DCollider.collideInScene(director.currentScene!, movingNode:sprite, direction:fBallDirection, instantaneousSpeed:dV)
+        let collisions = W2DCollider.collideInScene(director.currentScene!, movingNode:sprite, direction:fDirection, instantaneousSpeed:dV)
         if !collisions.isEmpty
         {
             var closestCollision : W2DCollision?
@@ -71,20 +96,20 @@ class BallBehavior : W2DComponent, W2DBehavior
             
             ballSprite.position = newPos
             
-            fBallDirection = closestCollision!.bounceDirection
-            fBallSpeed *= closestCollision!.bounceSpeedFactor
+            fDirection = closestCollision!.bounceDirection
+            fSpeed *= closestCollision!.bounceSpeedFactor
             
             let maxBallSpeed :CGFloat = 120
             
-            if fBallSpeed > maxBallSpeed
+            if fSpeed > maxBallSpeed
             {
-                fBallSpeed = maxBallSpeed
+                fSpeed = maxBallSpeed
             }
         }
         else
         {
             // move the ball linearly
-            let v = fBallDirection.mul(dV);
+            let v = fDirection.mul(dV);
             
             let newBallPos = ballSprite.position.add(v)
             ballSprite.position = newBallPos

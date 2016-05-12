@@ -44,17 +44,20 @@ public class PongLevel : W2DComponent, W2DBehavior
     
     public func execute(dT:NSTimeInterval, director:W2DDirector!)
     {
-        // make sure all balls are still in game
-        let context = director.context
-        let screenBounds = CGRectMake(0, 0, CGFloat(context.width), CGFloat(context.height))
-        
-        for ball in fBalls
-        {            
-            let ballBox = ball.globalBoundingBox
-            if !CGRectContainsRect(screenBounds, ballBox)
+        if !fLost
+        {
+            // make sure all balls are still in game
+            let context = director.context
+            let screenBounds = CGRectMake(0, 0, CGFloat(context.width), CGFloat(context.height))
+            
+            for ball in fBalls
             {
-                onLost(director)
-                break
+                let ballBox = ball.globalBoundingBox
+                if !CGRectContainsRect(screenBounds, ballBox)
+                {
+                    onBallLost(director, ball:ball)
+                    break
+                }
             }
         }
     }
@@ -236,36 +239,74 @@ public class PongLevel : W2DComponent, W2DBehavior
     private func startGame(director:W2DDirector!)
     {
         director.addBehavior(self)
-        
-        let context = director.context
-        
-        let contextWidth = CGFloat(context.width)
-        let contextHeight = CGFloat(context.height)
-        
+                
         let normalizedPadY = Float(0.5)
         director.setDigitalCrownValue(normalizedPadY)
         self.setPadPosition(normalizedPadY, director:director)
         
         for ball in fBalls
         {
-            let ballSize = ball.size
-            let s = ball.scale
-            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width * s), (contextHeight - (ballSize.height * s)) / 2)
-            ball.position = ballPos
+            if let movingObject: MovingObject? = ball.component()
+            {
+                movingObject?.resetToInitialState()
+            }
         }
 
         fLost = false
         director.currentScene!.backgroundColor = W2DColor4f(red: 0, green: 0, blue: 0, alpha: 0)
     }
 
-    private func onLost(director:W2DDirector!)
+    private func onBallLost(director:W2DDirector!, ball:W2DNode!)
     {
         fLost = true
-        director.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
         
+        let movingObjectOrNil: MovingObject? = ball.component()
+        if let movingObject = movingObjectOrNil
+        {
+            movingObject.speed = 0.0
+        }
+        
+        director.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
         WKInterfaceDevice.currentDevice().playHaptic(.Failure)
         
-        director.stop()
+        fPlayer.health = fPlayer.health - 1
+        
+        // lost anim
+        let fadeToRed = W2DLambdaAction(duration: 1.0,
+            lambda: {(c:CGFloat) in
+            let color = W2DColor4f(red:c, green:0, blue:0)
+            director.currentScene!.backgroundColor = color
+
+        })
+
+        let fadeToTransparent = W2DLambdaAction(duration: 1.0,
+                                        lambda: {(c:CGFloat) in
+                                            let color = W2DColor4f(red:1.0 - c, green:0, blue:0)
+                                            director.currentScene!.backgroundColor = color
+                                            
+        })
+        
+        let completion = W2DLambdaAction(lambda:
+        {(c:CGFloat) in
+            if self.fPlayer.health == 0
+            {
+                // Game Over
+                director.stop()
+            }
+            else if let movingObject = movingObjectOrNil
+            {
+                // reposition ball and resume
+                movingObject.resetToInitialState()
+                self.fLost = false
+            }
+        })
+
+        let lostAnim = W2DSequenceAction()
+        lostAnim.addAction(fadeToRed)
+        lostAnim.addAction(fadeToTransparent)
+        lostAnim.addAction(completion)
+        
+        director.currentScene!.run(lostAnim)
     }
     
     internal func setPadPosition(value:Float, director:W2DDirector!)
