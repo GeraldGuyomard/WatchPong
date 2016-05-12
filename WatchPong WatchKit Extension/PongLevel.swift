@@ -11,6 +11,7 @@ import WatchScene2D
 
 public class PongLevel : W2DComponent, W2DBehavior
 {
+    var     fPlayer: Player!
     var     fBalls =  [W2DNode]()
     var     fPads = [W2DNode]()
     
@@ -24,6 +25,21 @@ public class PongLevel : W2DComponent, W2DBehavior
             fMustStartGame = false
             startGame(director)
         }
+    }
+    
+    public static func instance(scene:W2DScene!) -> PongLevel?
+    {
+        return scene.component()
+    }
+    
+    public required init(player:Player!)
+    {
+        fPlayer = player
+    }
+    
+    public var player:Player!
+    {
+        get { return fPlayer }
     }
     
     public func execute(dT:NSTimeInterval, director:W2DDirector!)

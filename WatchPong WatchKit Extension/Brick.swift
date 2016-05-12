@@ -69,8 +69,18 @@ public class Brick : W2DComponent
         }
         
         let myNode = collision.hitNode
+        if let scene = myNode.director?.currentScene
+        {
+            if let level = PongLevel.instance(scene)
+            {
+                let player = level.player
+                player.score = player.score + 10
+            }
+        }
         
-        if --fHealth == 0
+        fHealth -= 1
+        
+        if fHealth == 0
         {
             let collider : W2DCollider? = component()
             collider?.isActive = false

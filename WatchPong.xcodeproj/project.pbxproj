@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		740080D21CE53A5A009CE446 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740080D11CE53A5A009CE446 /* Player.swift */; };
 		743543B51BB0EC2100F254EB /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 743543B31BB0EC2100F254EB /* Interface.storyboard */; };
 		743D8ABD1BB1C6A70032B97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 748736C81BA654E100782540 /* Assets.xcassets */; };
 		743D8ABE1BB1C6C30032B97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 748736C81BA654E100782540 /* Assets.xcassets */; };
@@ -106,6 +107,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		740080D11CE53A5A009CE446 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		743543B41BB0EC2100F254EB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		74426D5B1C825FA200068074 /* Brick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brick.swift; sourceTree = "<group>"; };
 		7487369E1BA654E000782540 /* WatchPong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WatchPong.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -208,6 +210,7 @@
 				748E9FB21C4C2851000B074C /* BallBehavior.swift */,
 				748E9FB41C4C2D69000B074C /* PongLevel.swift */,
 				74426D5B1C825FA200068074 /* Brick.swift */,
+				740080D11CE53A5A009CE446 /* Player.swift */,
 			);
 			path = "WatchPong WatchKit Extension";
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				748736C71BA654E100782540 /* ExtensionDelegate.swift in Sources */,
 				748736C51BA654E100782540 /* GameController.swift in Sources */,
 				74426D5C1C825FA200068074 /* Brick.swift in Sources */,
+				740080D21CE53A5A009CE446 /* Player.swift in Sources */,
 				748E9FB31C4C2851000B074C /* BallBehavior.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

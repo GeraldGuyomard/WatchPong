@@ -10,7 +10,7 @@ import WatchKit
 import Foundation
 import WatchScene2D
 
-class GameController: WKInterfaceController
+class GameController: WKInterfaceController, PlayerDelegate
 {
     @IBOutlet var screenButton : WKInterfaceButton?
     @IBOutlet var myPicker: WKInterfacePicker?
@@ -21,29 +21,42 @@ class GameController: WKInterfaceController
     @IBOutlet var health2 : WKInterfaceObject?
     @IBOutlet var health3 : WKInterfaceObject?
     
-    var     fHealths = [WKInterfaceObject]()
-    var     fPlayerHealth : Int = 0
+    var     fHealthIndicators = [WKInterfaceObject]()
     
     var     f2DDirector: W2DDirector?
-    var     fLevel = PongLevel()
+    var     fPlayer = Player()
+    var     fLevel : PongLevel?
     
-    var playerHealth : Int
+    func onHealthChanged(player:Player, newHealth:UInt)
     {
-        get { return fPlayerHealth }
-        set(newHealth)
+        updateHealth()
+    }
+    
+    func onScoreChanged(player:Player, newHealth:UInt)
+    {
+        updateScore()
+    }
+    
+    private func updateHealth()
+    {
+        let newHealth = fPlayer.health
+        assert(newHealth <= UInt(fHealthIndicators.count))
+        
+        var h = Int(newHealth)
+        for indicator in fHealthIndicators
         {
-            if fPlayerHealth != newHealth
-            {
-                fPlayerHealth = newHealth
-                assert(fPlayerHealth <= fHealths.count)
-                
-                var h = fPlayerHealth
-                for indicator in fHealths
-                {
-                    indicator.setHidden(h <= 0)
-                    h -= 1
-                }
-            }
+            indicator.setHidden(h <= 0)
+            h -= 1
+        }
+    }
+    
+    private func updateScore()
+    {
+        if let l = scoreLabel
+        {
+            let newScore = fPlayer.score
+            let text = String(newScore)
+            l.setText(text)
         }
     }
     
@@ -56,20 +69,24 @@ class GameController: WKInterfaceController
         
         if let h = health1
         {
-            fHealths.append(h)
+            fHealthIndicators.append(h)
         }
         
         if let h = health2
         {
-            fHealths.append(h)
+            fHealthIndicators.append(h)
         }
         
         if let h = health3
         {
-            fHealths.append(h)
+            fHealthIndicators.append(h)
         }
         
-        self.playerHealth = fHealths.count
+        fPlayer.health = UInt(fHealthIndicators.count)
+        fPlayer.delegate = self
+        
+        updateHealth()
+        updateScore()
         
         let contextWidth = UInt(bounds.width)
         let contextHeight = (bounds.width == 156) ? UInt(148) : UInt(120) // UInt(146 - 20)
@@ -80,7 +97,10 @@ class GameController: WKInterfaceController
         
         f2DDirector!.setupDigitalCrownInput(picker:self.myPicker!, sensitivity:30)
         
-        f2DDirector!.currentScene = fLevel.createScene(f2DDirector!)
+        // Create the level
+        fLevel = PongLevel(player:fPlayer)
+        
+        f2DDirector!.currentScene = fLevel?.createScene(f2DDirector!)
     }
 
     override func willActivate()
@@ -92,7 +112,7 @@ class GameController: WKInterfaceController
                 
         self.myPicker!.focus()
         
-        fLevel.willActivate(f2DDirector)
+        fLevel?.willActivate(f2DDirector)
     }
 
     override func didDeactivate()
@@ -113,7 +133,7 @@ class GameController: WKInterfaceController
             {[weak self](value:Float) in
                 if let this = self
                 {
-                    this.fLevel.setPadPosition(value, director:this.f2DDirector)
+                    this.fLevel?.setPadPosition(value, director:this.f2DDirector)
                 }
             })
     }
