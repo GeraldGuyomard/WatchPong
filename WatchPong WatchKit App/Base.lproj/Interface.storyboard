@@ -73,6 +73,7 @@
                         <outlet property="health2" destination="KhX-it-t8Z" id="Q8D-zp-opC"/>
                         <outlet property="health3" destination="Unu-7E-HuB" id="CLo-UL-QuF"/>
                         <outlet property="myPicker" destination="k0B-HL-52d" id="EVR-hG-H9F"/>
+                        <outlet property="scoreLabel" destination="EAq-1e-9QI" id="csS-qL-XyI"/>
                         <outlet property="screenButton" destination="YJh-ry-r8N" id="CoZ-Vh-2Q8"/>
                     </connections>
                 </controller>

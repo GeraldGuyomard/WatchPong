@@ -15,6 +15,8 @@ class GameController: WKInterfaceController
     @IBOutlet var screenButton : WKInterfaceButton?
     @IBOutlet var myPicker: WKInterfacePicker?
     
+    @IBOutlet var scoreLabel: WKInterfaceLabel?
+    
     @IBOutlet var health1 : WKInterfaceObject?
     @IBOutlet var health2 : WKInterfaceObject?
     @IBOutlet var health3 : WKInterfaceObject?
