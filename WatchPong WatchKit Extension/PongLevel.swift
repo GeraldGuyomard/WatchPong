@@ -272,7 +272,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         fPlayer.health = fPlayer.health - 1
         
         // lost anim
-        let fadeToRed = W2DLambdaAction(duration: 1.0,
+        let fadeToRed = W2DLambdaAction(duration: 0.5,
             lambda: {(target:W2DNode?, c:CGFloat) in
                 let color = W2DColor4f(red:c, green:0, blue:0)
                 director.currentScene!.backgroundColor = color
@@ -280,7 +280,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         })
         fadeToRed.name = "fadeToRed"
 
-        let fadeToTransparent = W2DLambdaAction(duration: 1.0,
+        let fadeToTransparent = W2DLambdaAction(duration: 0.5,
             lambda: {(target:W2DNode?, c:CGFloat) in
                 let color = W2DColor4f(red:1.0 - c, green:0, blue:0)
                 director.currentScene!.backgroundColor = color
@@ -304,9 +304,41 @@ public class PongLevel : W2DComponent, W2DBehavior
         })
         completion.name = "LostAnimCompletion"
 
+        // Blinking ball
+        let makeBallInVisibleAction = W2DLambdaAction(duration: 0.25,
+                                                lambda: {(target:W2DNode?, c:CGFloat) in
+                                                    if let node = target
+                                                    {
+                                                        node.hidden = true
+                                                    }
+                                                    
+        })
+        makeBallInVisibleAction.name = "makeBallInVisibleAction"
+
+        let makeBallVisibleAction = W2DLambdaAction(duration: 0.25,
+                                                      lambda: {(target:W2DNode?, c:CGFloat) in
+                                                        if let node = target
+                                                        {
+                                                            node.hidden = false
+                                                        }
+                                                        
+        })
+        makeBallInVisibleAction.name = "makeBallVisibleAction"
+        
+        let blinkBallAction = W2DSequenceAction()
+        blinkBallAction.addAction(makeBallInVisibleAction)
+        blinkBallAction.addAction(makeBallVisibleAction)
+        
+        let repeatBlinkBallAction = W2DRepeatAction(action: blinkBallAction, count: 5)
+        
+        let fadeBackground = W2DSequenceAction()
+        fadeBackground.addAction(fadeToRed)
+        fadeBackground.addAction(fadeToTransparent)
+        let repeatFadeAction = W2DRepeatAction(action:fadeBackground, count:3)
+        
         let lostAnim = W2DSequenceAction()
-        lostAnim.addAction(fadeToRed)
-        lostAnim.addAction(fadeToTransparent)
+        lostAnim.addAction(repeatFadeAction)
+        lostAnim.addAction(repeatBlinkBallAction)
         lostAnim.addAction(completion)
         
         director.currentScene!.run(lostAnim)
