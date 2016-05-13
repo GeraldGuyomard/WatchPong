@@ -90,7 +90,7 @@ public class Brick : W2DComponent
         
         let alpha = CGFloat(fHealth) / CGFloat(fMaxHealth)
         let action = W2DFadeToAction(duration: 0.25, finalAlpha: alpha)
-        let completion = W2DCallbackAction(callback: {[weak self](target:W2DNode?) in
+        let completion = W2DLambdaAction(lambda:{[weak self](target:W2DNode?, coeff:CGFloat) in
                 if let this = self
                 {
                     if this.fHealth == 0
