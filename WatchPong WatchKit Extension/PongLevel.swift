@@ -272,7 +272,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         fPlayer.health = fPlayer.health - 1
         
         // lost anim
-        let fadeToRed = W2DLambdaAction(duration: 0.5,
+        let fadeToRed = W2DLambdaAction(duration: 0.25,
             lambda: {(target:W2DNode?, c:CGFloat) in
                 let color = W2DColor4f(red:c, green:0, blue:0)
                 director.currentScene!.backgroundColor = color
@@ -280,7 +280,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         })
         fadeToRed.name = "fadeToRed"
 
-        let fadeToTransparent = W2DLambdaAction(duration: 0.5,
+        let fadeToTransparent = W2DLambdaAction(duration: 0.25,
             lambda: {(target:W2DNode?, c:CGFloat) in
                 let color = W2DColor4f(red:1.0 - c, green:0, blue:0)
                 director.currentScene!.backgroundColor = color
