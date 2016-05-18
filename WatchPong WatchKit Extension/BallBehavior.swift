@@ -48,6 +48,8 @@ class BallBehavior : W2DComponent, W2DBehavior, MovingObject
         let myNodeOrNil : W2DNode? = self.component()
         if let myNode = myNodeOrNil
         {
+            myNode.scale = 1.0
+            
             let ballSize = myNode.size
             let s = myNode.scale
             
@@ -58,6 +60,8 @@ class BallBehavior : W2DComponent, W2DBehavior, MovingObject
             
             let ballPos = CGPointMake(contextWidth - (2 * ballSize.width * s), (contextHeight - (ballSize.height * s)) / 2)
             myNode.position = ballPos
+            
+            myNode.hidden = false
         }
     }
     
