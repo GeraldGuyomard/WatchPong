@@ -253,7 +253,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
 
         fLost = false
-        director.currentScene!.backgroundColor = W2DColor4f(red: 0, green: 0, blue: 0, alpha: 0)
+        director.currentScene!.backgroundColor = nil
     }
 
     private func onBallLost(director:W2DDirector!, ball:W2DNode!)
@@ -272,17 +272,19 @@ public class PongLevel : W2DComponent, W2DBehavior
         fPlayer.health = fPlayer.health - 1
         
         // lost anim
-        let fadeToRed = W2DLambdaAction(duration: 0.1,
+        let actionDuration : NSTimeInterval = 0.25
+        
+        let fadeToRed = W2DLambdaAction(duration: actionDuration,
             lambda: {(target:W2DNode?, c:CGFloat) in
-                let color = W2DColor4f(red:c, green:0, blue:0)
+                let color = W2DColor4f(red:c, green:0, blue:0, alpha:c)
                 director.currentScene!.backgroundColor = color
 
         })
         fadeToRed.name = "fadeToRed"
-
-        let fadeToTransparent = W2DLambdaAction(duration: 0.1,
+        
+        let fadeToTransparent = W2DLambdaAction(duration:actionDuration,
             lambda: {(target:W2DNode?, c:CGFloat) in
-                let color = W2DColor4f(red:1.0 - c, green:0, blue:0)
+                let color = W2DColor4f(red:1.0 - c, green:0, blue:0, alpha:1.0 - c)
                 director.currentScene!.backgroundColor = color
                 
         })
@@ -297,6 +299,8 @@ public class PongLevel : W2DComponent, W2DBehavior
             }
             else if let movingObject = movingObjectOrNil
             {
+                director.currentScene!.backgroundColor = nil
+                
                 // reposition ball and resume
                 movingObject.resetToInitialState()
                 self.fLost = false
@@ -323,20 +327,23 @@ public class PongLevel : W2DComponent, W2DBehavior
         
         let blinkBallAction = W2DSequenceAction()
         blinkBallAction.addAction(makeBallInvisibleAction)
-        blinkBallAction.addAction(W2DDelayAction(duration: 0.25))
+        blinkBallAction.addAction(W2DDelayAction(duration: actionDuration))
         blinkBallAction.addAction(makeBallVisibleAction)
-        blinkBallAction.addAction(W2DDelayAction(duration: 0.25))
+        blinkBallAction.addAction(W2DDelayAction(duration: actionDuration))
         
-        let repeatBlinkBallAction = W2DRepeatAction(action: blinkBallAction, count: 3)
         
-        let fadeBackground = W2DSequenceAction()
-        fadeBackground.addAction(fadeToRed)
-        fadeBackground.addAction(fadeToTransparent)
-        let repeatFadeAction = W2DRepeatAction(action:fadeBackground, count:2)
+        let fadeBackgroundAction = W2DSequenceAction()
+        fadeBackgroundAction.addAction(fadeToRed)
+        fadeBackgroundAction.addAction(fadeToTransparent)
+        
+        let spawnAction = W2DSpawnAction()
+        spawnAction.addAction(blinkBallAction)
+        spawnAction.addAction(fadeBackgroundAction)
+        
+        let repeatAction = W2DRepeatAction(action: spawnAction, count: 2)
         
         let lostAnim = W2DSequenceAction()
-        lostAnim.addAction(repeatFadeAction)
-        lostAnim.addAction(repeatBlinkBallAction)
+        lostAnim.addAction(repeatAction)
         lostAnim.addAction(completion)
         
         director.currentScene!.run(lostAnim)
