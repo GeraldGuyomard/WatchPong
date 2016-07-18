@@ -111,15 +111,15 @@ public class PongLevel : W2DComponent, W2DBehavior
         var pt = CGPointMake(16, 0);
         
         let director = scene.director!
-        
-        let brickImage = director.context.image(named:"brick-red.png")
-        let brickSize = brickImage!.size
+
+        let greenBrickImage = director.context.image(named:"brick-green.png")
+        let greenBrickSize = greenBrickImage!.size
         
         var id = 0
         
         for _ in 1...6
         {
-            let brick = createBrick(scene, image:brickImage!, id:id, health:3)
+            let brick = createBrick(scene, image:greenBrickImage!, id:id, health:3)
             id += 1
             
             brick.position = pt
@@ -127,15 +127,18 @@ public class PongLevel : W2DComponent, W2DBehavior
             let brickComponent : Brick = brick.component()!
             brickComponent.otherScaleAfterCollision = 0.5
             
-            pt.y += brickSize.height * 1.05
+            pt.y += greenBrickSize.height * 1.05
         }
         
-        pt = CGPointMake(16 + 2 * brickSize.width, brickSize.height * 0.5)
+        let redBrickImage = director.context.image(named:"brick-red.png")
+        let redBrickSize = redBrickImage!.size
+        
+        pt = CGPointMake(16 + 2 * greenBrickSize.width, greenBrickSize.height * 0.5)
         var rot : CGFloat = 10 * (CGFloat(M_PI) / 180.0)
         
         for _ in 1...4
         {
-            let brick = createBrick(scene, image:brickImage!, id:id, health:2)
+            let brick = createBrick(scene, image:redBrickImage!, id:id, health:2)
             id += 1
 
             brick.position = pt
@@ -143,18 +146,18 @@ public class PongLevel : W2DComponent, W2DBehavior
             brick.rotation = rot
             rot = -rot
             
-            pt.y += brickSize.height * 1.1
+            pt.y += redBrickSize.height * 1.1
         }
         
-        pt = CGPointMake(16 + 4 * brickSize.width, brickSize.height * 0.25)
+        pt = CGPointMake(16 + 4 * redBrickSize.width, redBrickSize.height * 0.25)
         for _ in 1...2
         {
-            let brick = createBrick(scene, image:brickImage!, id:id, health:1)
+            let brick = createBrick(scene, image:redBrickImage!, id:id, health:1)
             id += 1
 
             brick.position = pt
             
-            pt.y += brickSize.height * 2
+            pt.y += redBrickSize.height * 2
         }
     }
     
