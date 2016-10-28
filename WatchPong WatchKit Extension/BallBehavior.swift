@@ -11,7 +11,7 @@ import WatchScene2D
 
 class BallBehavior : W2DComponent, W2DBehavior, MovingObject
 {
-    var     fDirection : CGPoint = CGPointMake(0, 0)
+    var     fDirection : CGPoint = CGPoint(x: 0, y: 0)
     var     fSpeed : CGFloat = 0;
     
     var direction : CGPoint
@@ -29,7 +29,7 @@ class BallBehavior : W2DComponent, W2DBehavior, MovingObject
     func resetToInitialState()
     {
         // random angle between -45 and 45
-        let rInt = rand()
+        let rInt = arc4random()
         let r = Float(Double(rInt) / Double(RAND_MAX))
         let minV : Float = -45.0
         let maxV : Float = 45.0
@@ -58,14 +58,14 @@ class BallBehavior : W2DComponent, W2DBehavior, MovingObject
             let contextWidth = CGFloat(context.width)
             let contextHeight = CGFloat(context.height)
             
-            let ballPos = CGPointMake(contextWidth - (2 * ballSize.width * s), (contextHeight - (ballSize.height * s)) / 2)
+            let ballPos = CGPoint(x: contextWidth - (2 * ballSize.width * s), y: (contextHeight - (ballSize.height * s)) / 2)
             myNode.position = ballPos
             
             myNode.hidden = false
         }
     }
     
-    func execute(dT:NSTimeInterval, director:W2DDirector!)
+    func execute(_ dT:TimeInterval, director:W2DDirector!)
     {
         let dV = fSpeed * CGFloat(dT)
         
@@ -82,7 +82,7 @@ class BallBehavior : W2DComponent, W2DBehavior, MovingObject
         if !collisions.isEmpty
         {
             var closestCollision : W2DCollision?
-            var minDist = CGFloat.max
+            var minDist = CGFloat.greatestFiniteMagnitude
             
             for c in collisions
             {

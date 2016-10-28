@@ -27,17 +27,17 @@ class GameController: WKInterfaceController, PlayerDelegate
     var     fPlayer = Player()
     var     fLevel : PongLevel?
     
-    func onHealthChanged(player:Player, newHealth:UInt)
+    func onHealthChanged(_ player:Player, newHealth:UInt)
     {
         updateHealth()
     }
     
-    func onScoreChanged(player:Player, newHealth:UInt)
+    func onScoreChanged(_ player:Player, newHealth:UInt)
     {
         updateScore()
     }
     
-    private func updateHealth()
+    fileprivate func updateHealth()
     {
         let newHealth = fPlayer.health
         assert(newHealth <= UInt(fHealthIndicators.count))
@@ -50,7 +50,7 @@ class GameController: WKInterfaceController, PlayerDelegate
         }
     }
     
-    private func updateScore()
+    fileprivate func updateScore()
     {
         if let l = scoreLabel
         {
@@ -60,11 +60,11 @@ class GameController: WKInterfaceController, PlayerDelegate
         }
     }
     
-    override func awakeWithContext(context: AnyObject?)
+    override func awake(withContext context: Any?)
     {
-        super.awakeWithContext(context)
+        super.awake(withContext: context)
         
-        let bounds = WKInterfaceDevice.currentDevice().screenBounds
+        let bounds = WKInterfaceDevice.current().screenBounds
         print("screen bounds (\(bounds.width) x \(bounds.height)")
         
         if let h = health1
@@ -124,10 +124,10 @@ class GameController: WKInterfaceController, PlayerDelegate
 
     @IBAction func onQuit()
     {
-        self.pushControllerWithName("MainMenuController", context: nil)
+        self.pushController(withName: "MainMenuController", context: nil)
     }
     
-    @IBAction func pickerAction(iIndex: NSInteger)
+    @IBAction func pickerAction(_ iIndex: NSInteger)
     {
         f2DDirector!.processDigitalCrownInput(iIndex, handler:
             {[weak self](value:Float) in

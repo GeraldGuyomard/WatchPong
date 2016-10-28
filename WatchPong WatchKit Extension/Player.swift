@@ -11,15 +11,15 @@ import WatchScene2D
 
 public protocol PlayerDelegate : class
 {
-    func onHealthChanged(player:Player, newHealth:UInt)
-    func onScoreChanged(player:Player, newHealth:UInt)
+    func onHealthChanged(_ player:Player, newHealth:UInt)
+    func onScoreChanged(_ player:Player, newHealth:UInt)
 }
 
-public class Player
+open class Player
 {
-    weak public var delegate:PlayerDelegate? = nil
+    weak open var delegate:PlayerDelegate? = nil
     
-    public var health : UInt = 0
+    open var health : UInt = 0
     {
         didSet(newValue)
         {
@@ -30,7 +30,7 @@ public class Player
         }
     }
     
-    public var score : UInt = 0
+    open var score : UInt = 0
     {
         didSet(newValue)
         {

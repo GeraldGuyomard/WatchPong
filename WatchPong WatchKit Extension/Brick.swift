@@ -9,13 +9,13 @@
 import Foundation
 import WatchScene2D
 
-public class Brick : W2DComponent
+open class Brick : W2DComponent
 {
     var fMaxHealth : Int
     var fHealth : Int
     var fCollisionAction : W2DAction? = nil
     
-    public var otherScaleAfterCollision : CGFloat = 1.0
+    open var otherScaleAfterCollision : CGFloat = 1.0
     
     init(maxHealth:Int)
     {
@@ -23,7 +23,7 @@ public class Brick : W2DComponent
         fHealth = maxHealth
     }
     
-    override public func onComponentAdded(newHead:W2DComponent)
+    override open func onComponentAdded(_ newHead:W2DComponent)
     {
         super.onComponentAdded(newHead)
         
@@ -31,7 +31,7 @@ public class Brick : W2DComponent
         if let collider = colliderOrNil
         {
             collider.collisionCallback = {
-                [weak self](collision:W2DCollision) -> W2DCollision? in
+                [weak self](collision:inout W2DCollision) -> W2DCollision? in
                 {
                     if let myself = self
                     {
@@ -45,7 +45,7 @@ public class Brick : W2DComponent
         }
     }
     
-    override  public func onComponentRemoved(oldHead:W2DComponent, oldComponent:W2DComponent)
+    override  open func onComponentRemoved(_ oldHead:W2DComponent, oldComponent:W2DComponent)
     {
         let colliderOrNil : W2DCollider? = oldHead.component()
         if let collider = colliderOrNil
@@ -56,7 +56,7 @@ public class Brick : W2DComponent
         super.onComponentRemoved(oldHead, oldComponent:oldComponent)
     }
     
-    func handleCollision(collision:W2DCollision) -> W2DCollision
+    func handleCollision(_ collision:W2DCollision) -> W2DCollision
     {
         assert(fHealth > 0)
         
@@ -69,12 +69,12 @@ public class Brick : W2DComponent
         }
         
         let myNode = collision.hitNode
-        if let scene = myNode.director?.currentScene
+        if let scene = myNode?.director?.currentScene
         {
             if let level = PongLevel.instance(scene)
             {
                 let player = level.player
-                player.score = player.score + 10
+                player!.score = player!.score + 10
             }
         }
         
@@ -95,7 +95,7 @@ public class Brick : W2DComponent
                 {
                     if this.fHealth == 0
                     {
-                        myNode.removeFromParent()
+                        myNode!.removeFromParent()
                     }
                 }
             })
@@ -106,7 +106,7 @@ public class Brick : W2DComponent
         
         fCollisionAction = seq
         
-        myNode.run(fCollisionAction!)
+        myNode!.run(fCollisionAction!)
         
         return collision
     }

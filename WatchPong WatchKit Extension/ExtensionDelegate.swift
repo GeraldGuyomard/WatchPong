@@ -11,8 +11,6 @@ import WatchKit
 class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
     func applicationDidFinishLaunching() {
-        // Perform any final initialization of your application.
-        srand(UInt32(time(nil)));
     }
 
     func applicationDidBecomeActive() {

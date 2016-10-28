@@ -9,7 +9,7 @@
 import WatchKit
 import WatchScene2D
 
-public class PongLevel : W2DComponent, W2DBehavior
+open class PongLevel : W2DComponent, W2DBehavior
 {
     var     fPlayer: Player!
     var     fBalls =  [W2DNode]()
@@ -18,7 +18,7 @@ public class PongLevel : W2DComponent, W2DBehavior
     var     fMustStartGame = true;
     var     fLost = false;
     
-    func willActivate(director:W2DDirector!)
+    func willActivate(_ director:W2DDirector!)
     {
         if (fMustStartGame)
         {
@@ -27,7 +27,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    public static func instance(scene:W2DScene!) -> PongLevel?
+    open static func instance(_ scene:W2DScene!) -> PongLevel?
     {
         return scene.component()
     }
@@ -37,23 +37,23 @@ public class PongLevel : W2DComponent, W2DBehavior
         fPlayer = player
     }
     
-    public var player:Player!
+    open var player:Player!
     {
         get { return fPlayer }
     }
     
-    public func execute(dT:NSTimeInterval, director:W2DDirector!)
+    open func execute(_ dT:TimeInterval, director:W2DDirector!)
     {
         if !fLost
         {
             // make sure all balls are still in game
             let context = director.context
-            let screenBounds = CGRectMake(0, 0, CGFloat(context.width), CGFloat(context.height))
+            let screenBounds = CGRect(x: 0, y: 0, width: CGFloat(context.width), height: CGFloat(context.height))
             
             for ball in fBalls
             {
                 let ballBox = ball.globalBoundingBox
-                if !CGRectContainsRect(screenBounds, ballBox)
+                if !screenBounds.contains(ballBox)
                 {
                     onBallLost(director, ball:ball)
                     break
@@ -62,7 +62,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    private func createBrick(scene:W2DScene, image:W2DImage, id:Int, health:Int) -> W2DNode
+    fileprivate func createBrick(_ scene:W2DScene, image:W2DImage, id:Int, health:Int) -> W2DNode
     {
         let brick = W2DSprite(image:image, director:scene.director!)
         scene.addChild(brick)
@@ -76,39 +76,39 @@ public class PongLevel : W2DComponent, W2DBehavior
         return brick
     }
     
-    private func createBorders(scene:W2DScene)
+    fileprivate func createBorders(_ scene:W2DScene)
     {
         let director = scene.director!
         
         let context = director.context
-        let screenSize = CGSizeMake(CGFloat(context.width), CGFloat(context.height))
+        let screenSize = CGSize(width: CGFloat(context.width), height: CGFloat(context.height))
         let color = W2DColor4f(red: 1.0, green: 1.0, blue: 1.0)
         
         let topBorder = W2DColoredNode(color: color, director: director)
-        topBorder.size = CGSizeMake(screenSize.width, 4.0);
-        topBorder.position = CGPointMake(0, 0)
+        topBorder.size = CGSize(width: screenSize.width, height: 4.0);
+        topBorder.position = CGPoint(x: 0, y: 0)
         topBorder.addComponent(W2DCollider())
         topBorder.debugName = "topBorder"
         scene.addChild(topBorder)
         
         let bottomBorder = W2DColoredNode(color: color, director: director)
-        bottomBorder.size = CGSizeMake(screenSize.width, 4.0);
-        bottomBorder.position = CGPointMake(0, screenSize.height - bottomBorder.size.height)
+        bottomBorder.size = CGSize(width: screenSize.width, height: 4.0);
+        bottomBorder.position = CGPoint(x: 0, y: screenSize.height - bottomBorder.size.height)
         bottomBorder.addComponent(W2DCollider())
         topBorder.debugName = "bottomBorder"
         scene.addChild(bottomBorder)
         
         let leftBorder = W2DColoredNode(color: color, director: director)
-        leftBorder.size = CGSizeMake(4, screenSize.height);
-        leftBorder.position = CGPointMake(0, 0)
+        leftBorder.size = CGSize(width: 4, height: screenSize.height);
+        leftBorder.position = CGPoint(x: 0, y: 0)
         leftBorder.addComponent(W2DCollider())
         topBorder.debugName = "leftBorder"
         scene.addChild(leftBorder)
     }
     
-    private func createBricks(scene:W2DScene)
+    fileprivate func createBricks(_ scene:W2DScene)
     {
-        var pt = CGPointMake(16, 0);
+        var pt = CGPoint(x: 16, y: 0);
         
         let director = scene.director!
 
@@ -133,7 +133,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         let redBrickImage = director.context.image(named:"brick-red.png")
         let redBrickSize = redBrickImage!.size
         
-        pt = CGPointMake(16 + 2 * greenBrickSize.width, greenBrickSize.height * 0.5)
+        pt = CGPoint(x: 16 + 2 * greenBrickSize.width, y: greenBrickSize.height * 0.5)
         var rot : CGFloat = 10 * (CGFloat(M_PI) / 180.0)
         
         for _ in 1...4
@@ -149,7 +149,7 @@ public class PongLevel : W2DComponent, W2DBehavior
             pt.y += redBrickSize.height * 1.1
         }
         
-        pt = CGPointMake(16 + 4 * redBrickSize.width, redBrickSize.height * 0.25)
+        pt = CGPoint(x: 16 + 4 * redBrickSize.width, y: redBrickSize.height * 0.25)
         for _ in 1...2
         {
             let brick = createBrick(scene, image:redBrickImage!, id:id, health:1)
@@ -161,13 +161,13 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
     }
     
-    private func createBall(scene:W2DScene) -> W2DNode
+    fileprivate func createBall(_ scene:W2DScene) -> W2DNode
     {
         let director = scene.director!
         
         let sprite = W2DSprite(named: "ball.png", inDirector:director)
         sprite.debugName = "ball"
-        sprite.anchorPoint = CGPointMake(0.5, 0.5)
+        sprite.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         //sprite.scale = 0.5
         
         scene.addChild(sprite)
@@ -179,7 +179,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         return sprite
     }
     
-    private func createPad(scene:W2DScene) -> W2DNode
+    fileprivate func createPad(_ scene:W2DScene) -> W2DNode
     {
         let director = scene.director!
         
@@ -187,13 +187,13 @@ public class PongLevel : W2DComponent, W2DBehavior
         sprite.debugName = "pad"
         scene.addChild(sprite)
         
-        sprite.position = CGPointMake(CGFloat(director.context.width) - sprite.size.width, 0)
+        sprite.position = CGPoint(x: CGFloat(director.context.width) - sprite.size.width, y: 0)
         let padBeh = W2DCollider()
         padBeh.bounceSpeedFactor = 1.3
         padBeh.collisionCallback = {
-            (var collision:W2DCollision) -> W2DCollision? in
+            (collision: inout W2DCollision) -> W2DCollision? in
             {
-                WKInterfaceDevice.currentDevice().playHaptic(.Retry)
+                WKInterfaceDevice.current().play(.retry)
                 
                 if collision.edgeIndex == 0 // left edge
                 {
@@ -208,8 +208,8 @@ public class PongLevel : W2DComponent, W2DBehavior
                     let deviationAngleInDegree = (-normalizedDist * deviationRange)
                     let deviationAngle = deviationAngleInDegree * CGFloat(M_PI) / 180.0
                     
-                    let rotation = CGAffineTransformMakeRotation(deviationAngle)
-                    let deviatedDirection = CGPointApplyAffineTransform(collision.bounceDirection, rotation)
+                    let rotation = CGAffineTransform(rotationAngle: deviationAngle)
+                    let deviatedDirection = collision.bounceDirection.applying(rotation)
                                         
                     collision.bounceDirection = deviatedDirection.normalizedVector()
                 }
@@ -222,7 +222,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         return sprite
     }
     
-    public func createScene(director:W2DDirector) -> W2DScene
+    open func createScene(_ director:W2DDirector) -> W2DScene
     {
         let scene = W2DScene(director: director)
         scene.addComponent(self)
@@ -239,7 +239,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         return scene
     }
     
-    private func startGame(director:W2DDirector!)
+    fileprivate func startGame(_ director:W2DDirector!)
     {
         director.addBehavior(self)
                 
@@ -259,7 +259,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         director.currentScene!.backgroundColor = nil
     }
 
-    private func onBallLost(director:W2DDirector!, ball:W2DNode!)
+    fileprivate func onBallLost(_ director:W2DDirector!, ball:W2DNode!)
     {
         fLost = true
         
@@ -270,12 +270,12 @@ public class PongLevel : W2DComponent, W2DBehavior
         }
         
         director.currentScene!.backgroundColor = W2DColor4f(red:1, green:0, blue:0)
-        WKInterfaceDevice.currentDevice().playHaptic(.Failure)
+        WKInterfaceDevice.current().play(.failure)
         
         fPlayer.health = fPlayer.health - 1
         
         // lost anim
-        let actionDuration : NSTimeInterval = 0.25
+        let actionDuration : TimeInterval = 0.25
         
         let fadeToRed = W2DLambdaAction(duration: actionDuration,
             lambda: {(target:W2DNode?, c:CGFloat) in
@@ -352,7 +352,7 @@ public class PongLevel : W2DComponent, W2DBehavior
         director.currentScene!.run(lostAnim)
     }
     
-    internal func setPadPosition(value:Float, director:W2DDirector!)
+    internal func setPadPosition(_ value:Float, director:W2DDirector!)
     {
         let context = director.context
         
